@@ -54,14 +54,11 @@ export class HeroesListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.heroService
-          .deleteHero(hero)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: () => {
-              this.getHeroes();
-            },
-          });
+        this.heroService.deleteHero(hero).subscribe({
+          next: () => {
+            this.getHeroes();
+          },
+        });
       }
     });
   }

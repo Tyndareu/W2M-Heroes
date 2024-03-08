@@ -35,7 +35,7 @@ export class LayoutPageComponent {
     {
       label: 'Search',
       icon: 'search',
-      link: './search',
+      link: './search-hero',
     },
   ];
 }

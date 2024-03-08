@@ -18,6 +18,9 @@ export class LoadingInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    if (req.url.includes('/heroes?q')) {
+      return next.handle(req);
+    }
     this.loadingService.showLoader();
     return next.handle(req).pipe(
       finalize(() => {

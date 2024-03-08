@@ -1,0 +1,90 @@
+<div class="h-screen bg-chill-950">
+  <h1 class="bg-chill-950 py-5 text-center text-3xl text-white">
+    Search Heroes
+  </h1>
+
+  <form class="flex justify-center gap-3">
+    <mat-form-field class="example-full-width">
+      <mat-label>Hero</mat-label>
+      <input
+        type="text"
+        placeholder="Pick one"
+        aria-label="Hero Name"
+        matInput
+        [formControl]="searchInput"
+        [matAutocomplete]="auto" />
+      <mat-autocomplete
+        autoActiveFirstOption
+        #auto="matAutocomplete"
+        (optionSelected)="onOptionSelected($event)">
+        @for (hero of heroes(); track hero) {
+          <mat-option [value]="hero">{{ hero.superhero }}</mat-option>
+        }
+        @if (
+          heroes().length === 0 &&
+          searchInput.value &&
+          searchInput.value.length > 0
+        ) {
+          <mat-option [value]=""
+            >No heroes were found with the text: {{ searchInput.value }}
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+    <button
+      [disabled]="searchInput.value === ''"
+      (click)="clearSearchInput()"
+      class="mt-3"
+      mat-raised-button
+      color="warn">
+      Clear <mat-icon>close</mat-icon>
+    </button>
+  </form>
+
+  @if (selectedHero()) {
+    <div class="flex justify-center">
+      <mat-card class="w-80">
+        <mat-card-header>
+          <div mat-card-avatar class="bg-cover"></div>
+          <mat-card-title
+            >{{ selectedHero()?.superhero | titlecase }}
+          </mat-card-title>
+          <mat-card-subtitle
+            >{{ selectedHero()?.alter_ego | titlecase }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        @defer (on viewport) {
+          <img
+            mat-card-image
+            [src]="selectedHero()! | heroImage"
+            [alt]="selectedHero()?.superhero"
+            class="aspect-[384/614] h-auto w-80" />
+        } @placeholder {
+          <img
+            mat-card-image
+            src="assets/no-image.png"
+            [alt]="selectedHero()?.superhero"
+            class="aspect-[384/614] h-auto w-80" />
+        }
+        <mat-card-content class="mt-2">
+          <h3>{{ selectedHero()?.publisher }}</h3>
+          <p>First appearance: {{ selectedHero()?.first_appearance }}</p>
+        </mat-card-content>
+        <mat-card-actions class="flex w-full justify-around">
+          <button
+            (click)="deleteHero(selectedHero()!)"
+            mat-raised-button
+            color="warn">
+            Delete
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            [routerLink]="['/heroes/hero', selectedHero()!.id]">
+            Edit
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  }
+</div>

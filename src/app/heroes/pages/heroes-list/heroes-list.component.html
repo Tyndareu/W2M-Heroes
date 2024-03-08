@@ -44,17 +44,21 @@
     }
   </div>
 } @else {
-  <mat-card class="m-auto mt-6 max-w-[500px]">
-    <mat-card-header class="flex justify-center">
-      <mat-card-title>Error loading data</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Sorry, an error occurred while loading the data.</p>
-    </mat-card-content>
-    <mat-card-actions class="flex justify-center">
-      <button mat-raised-button color="primary" (click)="getHeroes()">
-        Try again
-      </button>
-    </mat-card-actions>
-  </mat-card>
+  <div class="h-screen bg-chill-950 text-center">
+    <div class="p-5">
+      <mat-card class="m-auto max-w-[500px] p-5">
+        <mat-card-header class="flex justify-center">
+          <mat-card-title>Error loading data</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Sorry, an error occurred while loading the data.</p>
+        </mat-card-content>
+        <mat-card-actions class="flex justify-center">
+          <button mat-raised-button color="primary" (click)="getHeroes()">
+            Try again
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
 }

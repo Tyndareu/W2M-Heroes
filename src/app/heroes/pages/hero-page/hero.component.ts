@@ -32,7 +32,7 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
   templateUrl: './hero.component.html',
 })
 export class HeroComponent implements OnInit {
-  @Input() heroID: string | null = null;
+  @Input() heroID?: string;
 
   public heroForm: FormGroup = this.fb.group({
     id: [''],
@@ -80,7 +80,6 @@ export class HeroComponent implements OnInit {
         });
     } else {
       this.heroForm.value.id = crypto.randomUUID();
-      console.log(this.heroForm.value);
       this.heroService
         .newHero(this.heroForm.value)
         .pipe(takeUntilDestroyed(this.destroyRef))

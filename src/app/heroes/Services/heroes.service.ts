@@ -21,6 +21,10 @@ export class HeroesService {
     return this.http.get<Hero[]>(`${this.apiUrl}/heroes`);
   }
 
+  public getSearchHeroes(query: string): Observable<Hero[]> {
+    return this.http.get<Hero[]>(`${this.apiUrl}/heroes?q=${query}&_limit=6`);
+  }
+
   public selectedHeroWithGetById(heroID: string): Observable<Hero> {
     return this.selectedHero.pipe(
       switchMap(hero => {
