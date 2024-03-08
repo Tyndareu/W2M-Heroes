@@ -23,7 +23,7 @@ export const heroesRoutes: Routes = [
       {
         path: 'hero/:heroID',
         loadComponent: () =>
-          import('./pages/hero/hero.component').then(c => c.HeroComponent),
+          import('./pages/hero-page/hero.component').then(c => c.HeroComponent),
       },
     ],
   },

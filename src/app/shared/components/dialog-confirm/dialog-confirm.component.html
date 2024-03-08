@@ -1,0 +1,19 @@
+<div class="bg-chill-950 p-10 text-chill-300">
+  <h2 class="text-center text-2xl" mat-dialog-title>{{ data.title }}</h2>
+  <div mat-dialog-content>
+    <p>
+      {{ data.text }}
+      <span class="text-chill-100"> {{ data.name }}</span>
+    </p>
+  </div>
+  <div mat-dialog-actions class="mt-5 flex flex-wrap justify-around">
+    <button mat-raised-button color="warn" (click)="onNoClick()">Cancel</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onConfirm()"
+      cdkFocusInitial>
+      Accept
+    </button>
+  </div>
+</div>
