@@ -1,19 +1,15 @@
 import { Routes } from '@angular/router';
+import { heroesRoutes } from './heroes/heroes.routes';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'heroes', pathMatch: 'full' },
-  {
-    path: 'heroes',
-    loadChildren: () =>
-      import('./heroes/heroes.routes').then(r => r.heroesRoutes),
-  },
-
+  ...heroesRoutes,
   {
     path: '404',
     loadComponent: () =>
-      import('./shared/page-not-found/page-not-found.component').then(
-        c => c.PageNotFoundComponent
-      ),
+      import(
+        './shared/components/page-not-found/page-not-found.component'
+      ).then(c => c.PageNotFoundComponent),
   },
   {
     path: '**',

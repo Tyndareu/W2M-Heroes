@@ -1,1 +1,43 @@
-<p>heroes-list works!</p>
+@if (heroes()) {
+  <div class="flex flex-wrap justify-center gap-10 bg-chill-950 p-5">
+    @for (hero of heroes(); track $index) {
+      <mat-card class="relative w-80 pb-12">
+        <mat-card-header>
+          <div mat-card-avatar class="bg-cover"></div>
+          <mat-card-title>{{ hero.superhero }} </mat-card-title>
+          <mat-card-subtitle>{{ hero.alter_ego }} </mat-card-subtitle>
+        </mat-card-header>
+        <img
+          mat-card-image
+          [src]="hero | heroImage"
+          [alt]="hero.superhero"
+          class="aspect-[384/614] h-auto w-80" />
+        <mat-card-content class="mt-2">
+          <h3>{{ hero.publisher }}</h3>
+          <p>First appearance: {{ hero.first_appearance }}</p>
+        </mat-card-content>
+        <mat-card-actions class="absolute bottom-0 flex w-full justify-around">
+          <button mat-raised-button color="warn">Delete</button>
+          <button mat-raised-button color="primary">Edit</button>
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+} @else {
+  <mat-card class="m-auto mt-6 max-w-[500px]">
+    <mat-card-header class="flex justify-center">
+      <mat-card-title>Error loading data</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+        Sorry, an error occurred while loading the data. Please try again later,
+        lease try again later.
+      </p>
+    </mat-card-content>
+    <mat-card-actions class="flex justify-center">
+      <button mat-raised-button color="primary" (click)="getHeroes()">
+        Try again
+      </button>
+    </mat-card-actions>
+  </mat-card>
+}

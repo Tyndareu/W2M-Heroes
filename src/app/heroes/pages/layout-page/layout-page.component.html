@@ -1,0 +1,36 @@
+<mat-sidenav-container fullscreen>
+  <mat-sidenav #sidenav mode="push" style="width: 200px; background: #2f1b5a">
+    <mat-toolbar color="primary" class="flex items-center justify-between">
+      <span>Menu</span> <span class="spacer"></span>
+      <button mat-icon-button (click)="sidenav.toggle()" class="h-fit">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </mat-toolbar>
+    <mat-list role="list">
+      <div class="m-auto flex w-44 flex-col text-red-500">
+        @for (item of sideBarItems; track $index) {
+          <button
+            mat-raised-button
+            color="primary"
+            class="mb-3"
+            [routerLink]="item.link"
+            (click)="sidenav.toggle()">
+            {{ item.label }}
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          </button>
+        }
+      </div>
+    </mat-list>
+  </mat-sidenav>
+  <mat-toolbar color="primary" class="text-center">
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div class="w-full text-center">
+      <h2>Heroes</h2>
+    </div>
+  </mat-toolbar>
+  <div>
+    <router-outlet />
+  </div>
+</mat-sidenav-container>

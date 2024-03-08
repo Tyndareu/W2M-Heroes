@@ -1,10 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { HeroesService } from '../../Services/heroes.service';
+import { Hero } from '../../interfaces/hero.interface';
+import { MatButtonModule } from '@angular/material/button';
+import { HeroImagePipe } from '../../pipes/hero-image.pipe';
 
 @Component({
   selector: 'app-heroes-list',
   standalone: true,
-  imports: [],
+  imports: [MatCardModule, MatButtonModule, HeroImagePipe],
   templateUrl: './heroes-list.component.html',
-  styleUrl: './heroes-list.component.css',
 })
-export class HeroesListComponent {}
+export class HeroesListComponent implements OnInit {
+  public heroes = signal<Hero[] | null>(null);
+
+  constructor(private heroService: HeroesService) {}
+  ngOnInit(): void {
+    this.getHeroes();
+  }
+
+  public getHeroes(): void {
+    this.heroService.getHeroes().subscribe({
+      next: heroes => this.heroes.set(heroes),
+    });
+  }
+}
