@@ -1,4 +1,78 @@
-<div class="flex h-screen flex-col bg-chill-950 p-5 text-center">
-  <h2>hello</h2>
-  <h2>hello</h2>
+<div class="flex h-screen flex-col items-center bg-chill-950 p-5 text-center">
+  <h1 class="py-5 text-center text-3xl text-white">
+    {{
+      heroID === 'new'
+        ? 'New Hero'
+        : heroForm.value.superhero
+          ? 'Edit Hero - ' + heroForm.value.superhero.toUpperCase()
+          : 'Edit Hero'
+    }}
+  </h1>
+  <div class="flex flex-wrap gap-5">
+    <div>
+      <img
+        mat-card-image
+        [src]="heroForm.value | heroImage"
+        [alt]="heroForm.value.superhero"
+        class="aspect-[384/614] h-auto w-80" />
+    </div>
+    <form [formGroup]="heroForm" (ngSubmit)="onSubmit()" class="flex flex-col">
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input
+          matInput
+          formControlName="superhero"
+          [value]="heroForm.get('superhero')?.value | uppercase"
+          placeholder="Superhero Name" />
+        @if (isValidFiled('superhero')) {
+          <span class="text-red-500">This field is required</span>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Publisher</mat-label>
+        <input matInput formControlName="publisher" placeholder="Publisher" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Alter Ego</mat-label>
+        <input matInput formControlName="alter_ego" placeholder="Alter Ego" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>First Appearance</mat-label>
+        <input
+          matInput
+          formControlName="first_appearance"
+          placeholder="First Appearance" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Img URL</mat-label>
+        <input matInput formControlName="alt_img" placeholder="Image URL" />
+      </mat-form-field>
+    </form>
+    <div class="flex flex-col gap-4 w-40">
+      <button (click)="onSubmit()" mat-raised-button color="primary">
+        Submit <mat-icon>create</mat-icon>
+      </button>
+      <button
+        (click)="heroForm.reset()"
+        mat-raised-button
+        color="accent"
+        type="submit">
+        Clear
+        <mat-icon>clear</mat-icon>
+      </button>
+      <button
+        [routerLink]="['/heroes/heroes-list']"
+        (click)="heroForm.reset()"
+        mat-raised-button
+        color="warn"
+        type="submit">
+        Cancel
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </div>
+  </div>
 </div>

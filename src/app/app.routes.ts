@@ -11,8 +11,8 @@ export const routes: Routes = [
         './shared/components/page-not-found/page-not-found.component'
       ).then(c => c.PageNotFoundComponent),
   },
-  {
-    path: '**',
-    redirectTo: '404',
-  },
+  // {
+  //   path: '**',
+  //   redirectTo: '404',
+  // },
 ];

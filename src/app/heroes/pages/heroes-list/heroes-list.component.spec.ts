@@ -8,10 +8,9 @@ describe('HeroesListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HeroesListComponent]
-    })
-    .compileComponents();
-    
+      imports: [HeroesListComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(HeroesListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

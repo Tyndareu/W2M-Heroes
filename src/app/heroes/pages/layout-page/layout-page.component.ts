@@ -30,7 +30,7 @@ export class LayoutPageComponent {
     {
       label: 'Add',
       icon: 'note_add',
-      link: './hero/null',
+      link: './hero/new',
     },
     {
       label: 'Search',
