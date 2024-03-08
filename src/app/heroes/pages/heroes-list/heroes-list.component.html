@@ -7,11 +7,19 @@
           <mat-card-title>{{ hero.superhero }} </mat-card-title>
           <mat-card-subtitle>{{ hero.alter_ego }} </mat-card-subtitle>
         </mat-card-header>
-        <img
-          mat-card-image
-          [src]="hero | heroImage"
-          [alt]="hero.superhero"
-          class="aspect-[384/614] h-auto w-80" />
+        @defer (on viewport) {
+          <img
+            mat-card-image
+            [src]="hero | heroImage"
+            [alt]="hero.superhero"
+            class="aspect-[384/614] h-auto w-80" />
+        } @placeholder {
+          <img
+            mat-card-image
+            src="/src/assets/no-image.png"
+            [alt]="hero.superhero"
+            class="aspect-[384/614] h-auto w-80" />
+        }
         <mat-card-content class="mt-2">
           <h3>{{ hero.publisher }}</h3>
           <p>First appearance: {{ hero.first_appearance }}</p>
@@ -29,10 +37,7 @@
       <mat-card-title>Error loading data</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <p>
-        Sorry, an error occurred while loading the data. Please try again later,
-        lease try again later.
-      </p>
+      <p>Sorry, an error occurred while loading the data.</p>
     </mat-card-content>
     <mat-card-actions class="flex justify-center">
       <button mat-raised-button color="primary" (click)="getHeroes()">
