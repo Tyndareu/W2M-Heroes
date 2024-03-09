@@ -8,6 +8,7 @@ import {
 } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
+import { CRUDResponseInterceptor } from './shared/interceptors/crud-response.interceptor';
 import { LoadingInterceptor } from './shared/interceptors/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -15,6 +16,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoadingInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CRUDResponseInterceptor,
       multi: true,
     },
     provideRouter(routes, withComponentInputBinding()),

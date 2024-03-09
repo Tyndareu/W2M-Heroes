@@ -12,6 +12,7 @@ import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
+import { map } from 'rxjs';
 import { HeroesService } from '../../Services/heroes.service';
 import { HeroImagePipe } from '../../pipes/hero-image.pipe';
 
@@ -92,9 +93,16 @@ export class HeroComponent implements OnInit {
   }
 
   private loadHero(): void {
+    if (!this.heroID) return;
     this.heroService
       .selectedHeroWithGetById(this.heroID!)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        map(hero => ({
+          ...hero,
+          superhero: hero.superhero.toUpperCase(),
+        }))
+      )
       .subscribe({
         next: hero => {
           this.heroForm.setValue(hero);
