@@ -34,7 +34,7 @@ describe('HeroesService', () => {
       { id: '2', superhero: 'Hero 2' },
     ];
 
-    service.getHeroes().subscribe(heroes => {
+    service.getHeroes(null).subscribe(heroes => {
       expect(heroes.length).toBe(2);
       expect(heroes).toEqual(dummyHeroes);
     });
@@ -52,13 +52,13 @@ describe('HeroesService', () => {
       { id: '2', superhero: 'Hero 2' },
     ];
 
-    service.getSearchHeroes(query).subscribe(heroes => {
+    service.getHeroes(query).subscribe(heroes => {
       expect(heroes.length).toBe(2);
       expect(heroes).toEqual(dummyHeroes);
     });
 
     const req = httpTestingController.expectOne(
-      `${environment.apiUrl}/heroes?q=${query}&_limit=3`
+      `${environment.apiUrl}/heroes?q=${query}&_limit=8`
     );
     expect(req.request.method).toBe('GET');
 

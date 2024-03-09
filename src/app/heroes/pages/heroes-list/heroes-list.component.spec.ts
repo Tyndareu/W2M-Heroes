@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CommonModule } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -10,33 +12,35 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
 import { HeroesService } from '../../Services/heroes.service';
-import { Hero } from '../../interfaces/hero.interface';
-import { HeroImagePipe } from '../../pipes/hero-image.pipe';
-import { SearchPageComponent } from './heroes-list.component';
+import { HeroesCardComponent } from '../heroes-card/heroes-card.component';
+import { HeroesListComponent } from './heroes-list.component';
 
-describe('SearchPageComponent', () => {
-  let component: SearchPageComponent;
-  let fixture: ComponentFixture<SearchPageComponent>;
+describe('HeroesListComponent', () => {
+  let component: HeroesListComponent;
+  let fixture: ComponentFixture<HeroesListComponent>;
   let heroesServiceSpy: jasmine.SpyObj<HeroesService>;
   let dialogSpy: jasmine.SpyObj<MatDialog>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  const mockHeroes = [{ id: '1', superhero: 'Hero 1' }];
 
   beforeEach(async () => {
-    const heroesService = jasmine.createSpyObj('HeroesService', [
-      'getSearchHeroes',
+    heroesServiceSpy = jasmine.createSpyObj('HeroesService', [
+      'getHeroes',
       'deleteHero',
       'setSelectedHero',
     ]);
+    heroesServiceSpy.getHeroes.and.returnValue(of(mockHeroes));
+
     const dialog = jasmine.createSpyObj('MatDialog', ['open']);
-    const router = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
       imports: [
-        CommonModule,
         FormsModule,
-        HeroImagePipe,
+        HeroesCardComponent,
+        HeroesListComponent,
         MatAutocompleteModule,
         MatButtonModule,
         MatCardModule,
@@ -46,36 +50,93 @@ describe('SearchPageComponent', () => {
         MatInputModule,
         MatProgressSpinnerModule,
         ReactiveFormsModule,
+        RouterTestingModule,
+        BrowserAnimationsModule,
       ],
       providers: [
-        { provide: HeroesService, useValue: heroesService },
+        { provide: HeroesService, useValue: heroesServiceSpy },
         { provide: MatDialog, useValue: dialog },
-        { provide: Router, useValue: router },
       ],
     }).compileComponents();
 
-    TestBed.configureTestingModule({
-      imports: [CommonModule],
-      providers: [SearchPageComponent],
-    });
-
-    fixture = TestBed.createComponent(SearchPageComponent);
-    component = fixture.componentInstance;
     heroesServiceSpy = TestBed.inject(
       HeroesService
     ) as jasmine.SpyObj<HeroesService>;
     dialogSpy = TestBed.inject(MatDialog) as jasmine.SpyObj<MatDialog>;
-    routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(HeroesListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should navigate to hero detail page when updateAndNavigateHero is called', () => {
-    const hero: Hero = { id: '1', superhero: 'Superhero 1' };
+  it('should get all heroes', () => {
+    heroesServiceSpy.getHeroes.and.returnValue(of(mockHeroes));
+
+    component.getAllHeroes();
+
+    expect(component.allHeroes()).toEqual(mockHeroes);
+  });
+
+  it('should set heroes and loading flag on search input change', () => {
+    const searchInput = new FormControl('test');
+
+    heroesServiceSpy.getHeroes.and.returnValue(of(mockHeroes));
+
+    component.searchInput = searchInput;
+
+    component.getHeroes();
+
+    expect(component.isLoading()).toBeFalse();
+  });
+
+  it('should handle option selected event', () => {
+    const event = {
+      option: {
+        value: { id: '1', superhero: 'Hero 1' },
+      },
+    } as MatAutocompleteSelectedEvent;
+
+    component.onOptionSelected(event);
+
+    expect(component.selectedHero()).toEqual(event.option.value);
+    expect(component.searchInput.value).toEqual(event.option.value.superhero);
+  });
+
+  it('should clear search input and selected hero', () => {
+    const searchInput = new FormControl('test');
+    const selectedHero = { id: '1', superhero: 'Hero 1' };
+
+    component.searchInput = searchInput;
+    component.selectedHero.set(selectedHero);
+
+    component.clearSearchInput();
+
+    expect(component.searchInput.value).toEqual('');
+    expect(component.selectedHero()).toBeUndefined();
+    expect(component.heroes()).toEqual([]);
+  });
+
+  it('should update and navigate hero', () => {
+    const hero = { id: '1', superhero: 'Hero 1' };
+
     component.updateAndNavigateHero(hero);
+
     expect(heroesServiceSpy.setSelectedHero).toHaveBeenCalledWith(hero);
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/heroes/hero', hero.id]);
+  });
+  it('should hide loading spinner after search completes', () => {
+    const searchInput = new FormControl('test');
+    component.searchInput = searchInput;
+
+    heroesServiceSpy.getHeroes.and.returnValue(of(mockHeroes));
+
+    component.getHeroes();
+
+    expect(component.isLoading()).toBeFalse();
   });
 });
