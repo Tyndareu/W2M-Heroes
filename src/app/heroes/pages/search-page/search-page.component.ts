@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -12,8 +12,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { RouterLink } from '@angular/router';
-import { debounceTime, map } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
+import { debounceTime, map, tap } from 'rxjs';
 import { DialogConfirmComponent } from '../../../shared/components/dialog-confirm/dialog-confirm.component';
 import { Hero } from '../../interfaces/hero.interface';
 import { HeroImagePipe } from '../../pipes/hero-image.pipe';
@@ -32,8 +33,8 @@ import { HeroesService } from './../../Services/heroes.service';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatProgressSpinnerModule,
     ReactiveFormsModule,
-    RouterLink,
   ],
   templateUrl: './search-page.component.html',
 })
@@ -41,13 +42,13 @@ export class SearchPageComponent implements OnInit {
   public searchInput = new FormControl('');
   public heroes = signal<Hero[]>([]);
   public selectedHero = signal<Hero | undefined>(undefined);
-
-  private destroyRef = inject(DestroyRef);
+  public isLoading = signal(false);
 
   constructor(
     private heroesService: HeroesService,
     private dialog: MatDialog,
-    private heroService: HeroesService
+    private destroyRef: DestroyRef,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +58,7 @@ export class SearchPageComponent implements OnInit {
   private searchHero(): void {
     this.searchInput.valueChanges
       .pipe(
+        tap(() => this.isLoading.set(true)),
         debounceTime(500),
         map(value => value as string),
         takeUntilDestroyed(this.destroyRef)
@@ -65,7 +67,9 @@ export class SearchPageComponent implements OnInit {
         this.heroesService.getSearchHeroes(value).subscribe({
           next: heroes => {
             this.heroes.set(heroes);
+            this.isLoading.set(false);
           },
+          error: () => this.isLoading.set(false),
         });
       });
   }
@@ -79,6 +83,16 @@ export class SearchPageComponent implements OnInit {
     this.selectedHero.set(hero);
   }
 
+  public clearSearchInput(): void {
+    this.searchInput.setValue('');
+    this.selectedHero.set(undefined);
+  }
+
+  public updateAndNavigateHero(hero: Hero): void {
+    this.heroesService.setSelectedHero(hero);
+    this.router.navigate(['/heroes/hero', hero.id]);
+  }
+
   public deleteHero(hero: Hero): void {
     const dialogRef = this.dialog.open(DialogConfirmComponent, {
       data: {
@@ -90,7 +104,7 @@ export class SearchPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.heroService.deleteHero(hero).subscribe({
+        this.heroesService.deleteHero(hero).subscribe({
           next: () => {
             this.selectedHero.set(undefined);
             this.searchInput.setValue('');
@@ -98,9 +112,5 @@ export class SearchPageComponent implements OnInit {
         });
       }
     });
-  }
-  public clearSearchInput(): void {
-    this.searchInput.setValue('');
-    this.selectedHero.set(undefined);
   }
 }

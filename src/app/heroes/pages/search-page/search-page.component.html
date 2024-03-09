@@ -20,7 +20,14 @@
         @for (hero of heroes(); track hero) {
           <mat-option [value]="hero">{{ hero.superhero }}</mat-option>
         }
-        @if (
+        @if (isLoading() && searchInput.value !== '') {
+          <mat-option [value]="">
+            <div class="flex gap-3">
+              <p>Loading...</p>
+              <mat-spinner diameter="30" />
+            </div>
+          </mat-option>
+        } @else if (
           heroes().length === 0 &&
           searchInput.value &&
           searchInput.value.length > 0
@@ -68,7 +75,9 @@
         }
         <mat-card-content class="mt-2">
           <h3>{{ selectedHero()?.publisher }}</h3>
-          <p>First appearance: {{ selectedHero()?.first_appearance }}</p>
+          @if (selectedHero()?.publisher) {
+            <p>First appearance: {{ selectedHero()?.publisher }}</p>
+          }
         </mat-card-content>
         <mat-card-actions class="flex w-full justify-around">
           <button
@@ -80,7 +89,7 @@
           <button
             mat-raised-button
             color="primary"
-            [routerLink]="['/heroes/hero', selectedHero()!.id]">
+            (click)="updateAndNavigateHero(selectedHero()!)">
             Edit
           </button>
         </mat-card-actions>

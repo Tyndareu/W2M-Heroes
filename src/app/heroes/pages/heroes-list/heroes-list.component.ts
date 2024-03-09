@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { DialogConfirmComponent } from '../../../shared/components/dialog-confirm/dialog-confirm.component';
 import { HeroesService } from '../../Services/heroes.service';
 import { Hero } from '../../interfaces/hero.interface';
@@ -13,23 +13,17 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
 @Component({
   selector: 'app-heroes-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    HeroImagePipe,
-    MatButtonModule,
-    MatCardModule,
-    RouterLink,
-  ],
+  imports: [CommonModule, HeroImagePipe, MatButtonModule, MatCardModule],
   templateUrl: './heroes-list.component.html',
 })
 export class HeroesListComponent implements OnInit {
   public heroes = signal<Hero[] | null>(null);
 
-  private destroyRef = inject(DestroyRef);
-
   constructor(
     private heroService: HeroesService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private destroyRef: DestroyRef,
+    private readonly router: Router
   ) {}
   ngOnInit(): void {
     this.getHeroes();
@@ -43,6 +37,12 @@ export class HeroesListComponent implements OnInit {
         next: heroes => this.heroes.set(heroes),
       });
   }
+
+  public updateAndNavigateHero(hero: Hero): void {
+    this.heroService.setSelectedHero(hero);
+    this.router.navigate(['/heroes/hero', hero.id]);
+  }
+
   public deleteHero(hero: Hero): void {
     const dialogRef = this.dialog.open(DialogConfirmComponent, {
       data: {

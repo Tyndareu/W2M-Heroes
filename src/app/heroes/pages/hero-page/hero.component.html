@@ -14,7 +14,7 @@
         mat-card-image
         [src]="heroForm.value | heroImage"
         [alt]="heroForm.value.superhero"
-        class="aspect-[384/614] h-auto w-80" />
+        class="aspect-[384/614] h-auto w-80 border-2 border-chill-500" />
     </div>
     <form [formGroup]="heroForm" (ngSubmit)="onSubmit()" class="flex flex-col">
       <mat-form-field appearance="fill">

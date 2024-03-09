@@ -27,7 +27,9 @@
         }
         <mat-card-content class="mt-2">
           <h3>{{ hero.publisher }}</h3>
-          <p>First appearance: {{ hero.first_appearance }}</p>
+          @if (hero.first_appearance) {
+            <p>First appearance: {{ hero.first_appearance }}</p>
+          }
         </mat-card-content>
         <mat-card-actions class="absolute bottom-0 flex w-full justify-around">
           <button (click)="deleteHero(hero)" mat-raised-button color="warn">
@@ -36,7 +38,7 @@
           <button
             mat-raised-button
             color="primary"
-            [routerLink]="['/heroes/hero', hero.id]">
+            (click)="updateAndNavigateHero(hero)">
             Edit
           </button>
         </mat-card-actions>

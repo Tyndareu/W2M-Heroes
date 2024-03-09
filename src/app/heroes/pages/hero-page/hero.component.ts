@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, Input, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, Input, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
@@ -44,17 +44,43 @@ export class HeroComponent implements OnInit {
     alt_img: [null],
   });
 
-  private destroyRef = inject(DestroyRef);
-
   constructor(
     private heroService: HeroesService,
     private fb: FormBuilder,
+    private destroyRef: DestroyRef,
     private readonly _route: Router
   ) {}
 
   ngOnInit(): void {
     if (this.heroID !== 'new') {
-      this.getHero();
+      this.loadHero();
+    }
+  }
+
+  public onSubmit(): void {
+    if (this.heroForm.invalid) {
+      this.heroForm.markAllAsTouched();
+      return;
+    }
+    const formData = { ...this.heroForm.value };
+    formData.superhero = this.toTitleCase(formData.superhero);
+
+    if (this.heroID !== 'new') {
+      this.heroService.setSelectedHero(this.heroForm.value);
+      this.heroService
+        .updateHero(formData)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => this._route.navigate(['/heroes/heroes-list']),
+        });
+    } else {
+      this.heroForm.value.id = crypto.randomUUID();
+      this.heroService
+        .newHero(formData)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => this._route.navigate(['/heroes/heroes-list']),
+        });
     }
   }
 
@@ -65,31 +91,7 @@ export class HeroComponent implements OnInit {
     );
   }
 
-  public onSubmit(): void {
-    if (this.heroForm.invalid) {
-      this.heroForm.markAllAsTouched();
-      return;
-    }
-    if (this.heroID !== 'new') {
-      this.heroService.setSelectedHero(this.heroForm.value);
-      this.heroService
-        .updateHero(this.heroForm.value)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => this._route.navigate(['/heroes/heroes-list']),
-        });
-    } else {
-      this.heroForm.value.id = crypto.randomUUID();
-      this.heroService
-        .newHero(this.heroForm.value)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => this._route.navigate(['/heroes/heroes-list']),
-        });
-    }
-  }
-
-  private getHero(): void {
+  private loadHero(): void {
     this.heroService
       .selectedHeroWithGetById(this.heroID!)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -98,5 +100,10 @@ export class HeroComponent implements OnInit {
           this.heroForm.setValue(hero);
         },
       });
+  }
+  private toTitleCase(str: string): string {
+    return str.replace(/\w\S*/g, txt => {
+      return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
+    });
   }
 }
