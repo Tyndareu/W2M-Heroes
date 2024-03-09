@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, Input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
@@ -8,12 +8,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { HeroesService } from '../../Services/heroes.service';
+import { Hero } from '../../interfaces/hero.interface';
 import { HeroImagePipe } from '../../pipes/hero-image.pipe';
 
 @Component({
@@ -23,6 +25,7 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
     CommonModule,
     HeroImagePipe,
     MatButtonModule,
+    MatCardModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -35,6 +38,7 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
 export class HeroComponent implements OnInit {
   @Input() heroID?: string;
 
+  public hero = signal<Hero | null>(null);
   public heroForm: FormGroup = this.fb.group({
     id: [''],
     img: [''],
@@ -92,7 +96,7 @@ export class HeroComponent implements OnInit {
     );
   }
 
-  private loadHero(): void {
+  public loadHero(): void {
     if (!this.heroID) return;
     this.heroService
       .selectedHeroWithGetById(this.heroID!)
@@ -105,6 +109,7 @@ export class HeroComponent implements OnInit {
       )
       .subscribe({
         next: hero => {
+          this.hero.set(hero);
           this.heroForm.setValue(hero);
         },
       });

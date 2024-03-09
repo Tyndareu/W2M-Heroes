@@ -9,4 +9,21 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: #2f1b5a;
+}
+
+.snackbar-error .mdc-snackbar__surface {
+  background-color: rgb(172, 12, 12) !important;
+}
+
+.snackbar-error .mdc-snackbar__label {
+  color: white !important;
+}
+
+.snackbar-success .mdc-snackbar__surface {
+  background-color: rgb(14, 148, 14) !important;
+}
+
+.snackbar-success .mdc-snackbar__label {
+  color: white !important;
 }
