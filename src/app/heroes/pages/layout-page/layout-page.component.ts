@@ -23,17 +23,17 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 export class LayoutPageComponent {
   public sideBarItems = [
     {
-      label: 'List',
+      label: 'List of Heroes',
       icon: 'list',
       link: './heroes-list',
     },
     {
-      label: 'Add',
+      label: 'Add Hero',
       icon: 'note_add',
       link: './hero/new',
     },
     {
-      label: 'Search',
+      label: 'Search Hero',
       icon: 'search',
       link: './search-hero',
     },

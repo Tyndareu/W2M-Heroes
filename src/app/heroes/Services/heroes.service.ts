@@ -22,7 +22,7 @@ export class HeroesService {
   }
 
   public getSearchHeroes(query: string): Observable<Hero[]> {
-    return this.http.get<Hero[]>(`${this.apiUrl}/heroes?q=${query}&_limit=6`);
+    return this.http.get<Hero[]>(`${this.apiUrl}/heroes?q=${query}&_limit=3`);
   }
 
   public selectedHeroWithGetById(heroID: string): Observable<Hero> {

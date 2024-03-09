@@ -5,10 +5,15 @@
 html,
 body {
   height: 100%;
+  background-color: #2f1b5a;
 }
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.background-toolbar {
+  height: calc(100vh - 62px);
   background-color: #2f1b5a;
 }
 

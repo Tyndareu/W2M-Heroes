@@ -7,7 +7,7 @@
       </button>
     </mat-toolbar>
     <mat-list role="list">
-      <div class="m-auto flex w-44 flex-col text-red-500">
+      <div class="m-auto flex w-44 flex-col">
         @for (item of sideBarItems; track $index) {
           <button
             mat-raised-button
@@ -22,7 +22,7 @@
       </div>
     </mat-list>
   </mat-sidenav>
-  <mat-toolbar color="primary" class="text-center">
+  <mat-toolbar color="primary" class="text-center" style="height: 62px">
     <button mat-icon-button (click)="sidenav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
@@ -30,7 +30,7 @@
       <h2>Heroes</h2>
     </div>
   </mat-toolbar>
-  <div class="h-full bg-chill-950">
+  <div class="background-toolbar">
     <router-outlet />
   </div>
 </mat-sidenav-container>
