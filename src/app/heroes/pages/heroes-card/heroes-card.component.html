@@ -1,0 +1,45 @@
+@if (heroes) {
+  <div class="flex flex-wrap justify-center gap-10 bg-chill-950 p-5">
+    @for (hero of heroes; track $index) {
+      <mat-card class="relative w-80 pb-12">
+        <mat-card-header>
+          <div mat-card-avatar class="bg-cover"></div>
+          <mat-card-title>{{ hero.superhero | titlecase }} </mat-card-title>
+          <mat-card-subtitle
+            >{{ hero.alter_ego | titlecase }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        @defer (on viewport) {
+          <img
+            mat-card-image
+            [src]="hero | heroImage"
+            [alt]="hero.superhero"
+            class="aspect-[384/614] h-auto w-80" />
+        } @placeholder {
+          <img
+            mat-card-image
+            src="assets/no-image.png"
+            [alt]="hero.superhero"
+            class="aspect-[384/614] h-auto w-80" />
+        }
+        <mat-card-content class="mt-2">
+          <h3>{{ hero.publisher }}</h3>
+          @if (hero.first_appearance) {
+            <p>First appearance: {{ hero.first_appearance }}</p>
+          }
+        </mat-card-content>
+        <mat-card-actions class="absolute bottom-0 flex w-full justify-around">
+          <button (click)="onDeleteHero(hero)" mat-raised-button color="warn">
+            Delete
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="onUpdateAndNavigateHero(hero)">
+            Edit
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+}

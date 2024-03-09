@@ -69,6 +69,7 @@ export class HeroComponent implements OnInit {
     }
     const formData = { ...this.heroForm.value };
     formData.superhero = this.toTitleCase(formData.superhero);
+    formData.id = this.heroID;
 
     if (this.heroID !== 'new') {
       this.heroService.setSelectedHero(this.heroForm.value);
@@ -114,6 +115,12 @@ export class HeroComponent implements OnInit {
         },
       });
   }
+
+  public resetForm(): void {
+    this.heroForm.reset();
+    this.heroForm.get('img')?.setValue(this.hero()?.img);
+  }
+
   private toTitleCase(str: string): string {
     return str.replace(/\w\S*/g, txt => {
       return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();

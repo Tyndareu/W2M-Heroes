@@ -61,7 +61,7 @@
           Submit <mat-icon>create</mat-icon>
         </button>
         <button
-          (click)="heroForm.reset()"
+          (click)="resetForm()"
           mat-raised-button
           color="accent"
           type="submit">
@@ -70,7 +70,6 @@
         </button>
         <button
           [routerLink]="['/heroes/heroes-list']"
-          (click)="heroForm.reset()"
           mat-raised-button
           color="warn"
           type="submit">

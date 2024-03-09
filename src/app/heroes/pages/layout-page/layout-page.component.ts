@@ -32,10 +32,5 @@ export class LayoutPageComponent {
       icon: 'note_add',
       link: './hero/new',
     },
-    {
-      label: 'Search Hero',
-      icon: 'search',
-      link: './search-hero',
-    },
   ];
 }

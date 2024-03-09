@@ -17,12 +17,10 @@ export class HeroesService {
     this.selectedHero.next(hero);
   }
 
-  public getHeroes(): Observable<Hero[]> {
-    return this.http.get<Hero[]>(`${this.apiUrl}/heroes`);
-  }
-
-  public getSearchHeroes(query: string): Observable<Hero[]> {
-    return this.http.get<Hero[]>(`${this.apiUrl}/heroes?q=${query}&_limit=3`);
+  public getHeroes(query: string | null): Observable<Hero[]> {
+    return query !== null
+      ? this.http.get<Hero[]>(`${this.apiUrl}/heroes?q=${query}&_limit=8`)
+      : this.http.get<Hero[]>(`${this.apiUrl}/heroes`);
   }
 
   public selectedHeroWithGetById(heroID: string): Observable<Hero> {

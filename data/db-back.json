@@ -179,6 +179,24 @@
       "alter_ego": "Norrin Radd",
       "first_appearance": "The Fantastic Four #48",
       "alt_img": null
+    },
+    {
+      "id": "c8a08102-22f6-46f3-8e20-1da677a4512d",
+      "img": "",
+      "superhero": "False Batman",
+      "publisher": "",
+      "alter_ego": "",
+      "first_appearance": "",
+      "alt_img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/The_Dark_Knight_Batman.jpg/1200px-The_Dark_Knight_Batman.jpg"
+    },
+    {
+      "id": "QlvH0qC",
+      "img": "",
+      "superhero": "Alone Ranger",
+      "publisher": "",
+      "alter_ego": "",
+      "first_appearance": "",
+      "alt_img": "https://upload.wikimedia.org/wikipedia/en/0/0d/TheLoneRanger2013Poster.jpg"
     }
   ]
 }

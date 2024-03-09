@@ -25,13 +25,6 @@ export const heroesRoutes: Routes = [
         loadComponent: () =>
           import('./pages/hero-page/hero.component').then(c => c.HeroComponent),
       },
-      {
-        path: 'search-hero',
-        loadComponent: () =>
-          import('./pages/search-page/search-page.component').then(
-            c => c.SearchPageComponent
-          ),
-      },
     ],
   },
 ];

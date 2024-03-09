@@ -1,45 +1,113 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
+import { debounceTime, map, take, tap } from 'rxjs';
 import { DialogConfirmComponent } from '../../../shared/components/dialog-confirm/dialog-confirm.component';
 import { HeroesService } from '../../Services/heroes.service';
 import { Hero } from '../../interfaces/hero.interface';
-import { HeroImagePipe } from '../../pipes/hero-image.pipe';
+import { HeroesCardComponent } from '../heroes-card/heroes-card.component';
 
 @Component({
-  selector: 'app-heroes-list',
+  selector: 'app-search-page',
   standalone: true,
-  imports: [CommonModule, HeroImagePipe, MatButtonModule, MatCardModule],
+  imports: [
+    FormsModule,
+    HeroesCardComponent,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './heroes-list.component.html',
 })
 export class HeroesListComponent implements OnInit {
-  public heroes = signal<Hero[] | null>(null);
+  public searchInput = new FormControl('');
+  public heroes = signal<Hero[]>([]);
+  public allHeroes = signal<Hero[] | null>(null);
+  public selectedHero = signal<Hero | undefined>(undefined);
+  public isLoading = signal(false);
 
   constructor(
-    private heroService: HeroesService,
+    private heroesService: HeroesService,
     private dialog: MatDialog,
     private destroyRef: DestroyRef,
     private readonly router: Router
   ) {}
+
   ngOnInit(): void {
+    this.getAllHeroes();
     this.getHeroes();
   }
 
-  public getHeroes(): void {
-    this.heroService
-      .getHeroes()
-      .pipe(takeUntilDestroyed(this.destroyRef))
+  public getAllHeroes(): void {
+    this.heroesService
+      .getHeroes(null)
+      .pipe(take(1))
       .subscribe({
-        next: heroes => this.heroes.set(heroes),
+        next: heroes => {
+          this.allHeroes.set(heroes);
+        },
       });
   }
 
+  public getHeroes(): void {
+    this.searchInput.valueChanges
+      .pipe(
+        tap(() => {
+          this.isLoading.set(true);
+          this.selectedHero.set(undefined);
+        }),
+        debounceTime(500),
+        map(value => value as string),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((value: string) => {
+        if (value === '') {
+          return;
+        }
+        this.heroesService.getHeroes(value).subscribe({
+          next: heroes => {
+            this.heroes.set(heroes);
+            this.isLoading.set(false);
+          },
+          error: () => this.isLoading.set(false),
+        });
+      });
+  }
+
+  public onOptionSelected(event: MatAutocompleteSelectedEvent): void {
+    const hero: Hero = event.option.value;
+    if (!hero) {
+      return;
+    }
+    this.searchInput.setValue(hero.superhero);
+    this.selectedHero.set(hero);
+  }
+
+  public clearSearchInput(): void {
+    this.searchInput.setValue('');
+    this.selectedHero.set(undefined);
+    this.heroes.set([]);
+  }
+
   public updateAndNavigateHero(hero: Hero): void {
-    this.heroService.setSelectedHero(hero);
+    this.heroesService.setSelectedHero(hero);
     this.router.navigate(['/heroes/hero', hero.id]);
   }
 
@@ -54,9 +122,11 @@ export class HeroesListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.heroService.deleteHero(hero).subscribe({
+        this.heroesService.deleteHero(hero).subscribe({
           next: () => {
-            this.getHeroes();
+            this.getAllHeroes();
+            this.selectedHero.set(undefined);
+            this.searchInput.setValue('');
           },
         });
       }
