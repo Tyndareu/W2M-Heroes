@@ -25,7 +25,7 @@
         <mat-card-content class="mt-2">
           <h3>{{ hero.publisher }}</h3>
           @if (hero.first_appearance) {
-            <p>First appearance: {{ hero.first_appearance }}</p>
+            <p>First appearance: {{ hero.first_appearance | titlecase }}</p>
           }
         </mat-card-content>
         <mat-card-actions class="absolute bottom-0 flex w-full justify-around">
