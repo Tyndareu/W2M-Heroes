@@ -45,7 +45,7 @@ describe('HeroComponent', () => {
   });
 
   it('should load hero', () => {
-    const mockHero = {
+    const mockHero: Hero = {
       id: '1',
       superhero: 'Superman',
       publisher: 'DC Comics',
@@ -93,7 +93,7 @@ describe('HeroComponent', () => {
 
     component.heroForm = mockForm;
 
-    const isValid = component.isValidFiled('superhero');
+    const isValid = component.isValidField('superhero');
 
     expect(isValid).toBeTruthy();
   });
@@ -118,7 +118,7 @@ describe('HeroComponent', () => {
     const updateHeroSpy = heroesServiceSpy.updateHero.and.returnValue(
       of(mockHero)
     );
-    const navigateSpy = spyOn(component['_route'], 'navigate').and.returnValue(
+    const navigateSpy = spyOn(component['router'], 'navigate').and.returnValue(
       Promise.resolve(true)
     );
     component.heroID = '1';
@@ -138,7 +138,7 @@ describe('HeroComponent', () => {
       alt_img: 'test-alt-img-url',
     };
     const newHeroSpy = heroesServiceSpy.newHero.and.returnValue(of(mockHero));
-    const navigateSpy = spyOn(component['_route'], 'navigate').and.returnValue(
+    const navigateSpy = spyOn(component['router'], 'navigate').and.returnValue(
       Promise.resolve(true)
     );
 

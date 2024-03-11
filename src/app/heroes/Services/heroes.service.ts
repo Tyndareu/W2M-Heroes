@@ -8,13 +8,13 @@ import { Hero } from '../interfaces/hero.interface';
   providedIn: 'root',
 })
 export class HeroesService {
-  private readonly apiUrl = environment.apiUrl;
-  private selectedHero = new BehaviorSubject<Hero | null>(null);
+  private readonly apiUrl: string = environment.apiUrl;
+  private readonly selectedHero$ = new BehaviorSubject<Hero | null>(null);
 
   constructor(private readonly http: HttpClient) {}
 
   public setSelectedHero(hero: Hero): void {
-    this.selectedHero.next(hero);
+    this.selectedHero$.next(hero);
   }
 
   public getHeroes(query: string | null): Observable<Hero[]> {
@@ -24,7 +24,7 @@ export class HeroesService {
   }
 
   public selectedHeroWithGetById(heroID: string): Observable<Hero> {
-    return this.selectedHero.pipe(
+    return this.selectedHero$.pipe(
       switchMap(hero => {
         if (hero && hero.id === heroID) {
           return of(hero);
@@ -52,6 +52,6 @@ export class HeroesService {
   private getHeroById(heroID: string): Observable<Hero> {
     return this.http
       .get<Hero>(`${environment.apiUrl}/heroes/${heroID}`)
-      .pipe(tap(hero => this.selectedHero.next(hero)));
+      .pipe(tap(hero => this.selectedHero$.next(hero)));
   }
 }

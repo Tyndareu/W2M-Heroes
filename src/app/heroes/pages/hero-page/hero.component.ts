@@ -36,25 +36,29 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
   templateUrl: './hero.component.html',
 })
 export class HeroComponent implements OnInit {
-  @Input() heroID?: string;
+  @Input() public heroID!: string;
 
   public hero = signal<Hero | null>(null);
-  public heroForm: FormGroup = this.fb.group({
-    id: [''],
-    img: [''],
+  public heroForm: FormGroup;
+
+  private readonly formControls = {
+    id: '',
+    img: '',
     superhero: ['', Validators.required],
-    publisher: [''],
-    alter_ego: [''],
-    first_appearance: [''],
-    alt_img: [null],
-  });
+    publisher: '',
+    alter_ego: '',
+    first_appearance: '',
+    alt_img: null,
+  };
 
   constructor(
     private readonly heroService: HeroesService,
     private readonly fb: FormBuilder,
     private readonly destroyRef: DestroyRef,
-    private readonly _route: Router
-  ) {}
+    private readonly router: Router
+  ) {
+    this.heroForm = this.fb.group(this.formControls);
+  }
 
   ngOnInit(): void {
     if (this.heroID !== 'new') {
@@ -67,34 +71,23 @@ export class HeroComponent implements OnInit {
       this.heroForm.markAllAsTouched();
       return;
     }
-    const formData = { ...this.heroForm.value };
+    const formData: Hero = { ...this.heroForm.value };
     formData.superhero = this.toTitleCase(formData.superhero);
-    formData.id = this.heroID;
+    formData.id = this.heroID === 'new' ? crypto.randomUUID() : this.heroID;
 
-    if (this.heroID !== 'new') {
-      this.heroService.setSelectedHero(this.heroForm.value);
-      this.heroService
-        .updateHero(formData)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => this._route.navigate(['/heroes/heroes-list']),
-        });
-    } else {
-      this.heroForm.value.id = crypto.randomUUID();
-      this.heroService
-        .newHero(formData)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => this._route.navigate(['/heroes/heroes-list']),
-        });
-    }
+    const saveHero$ =
+      this.heroID !== 'new'
+        ? this.heroService.updateHero(formData)
+        : this.heroService.newHero(formData);
+
+    saveHero$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => this.router.navigate(['/heroes/heroes-list']),
+    });
   }
 
-  public isValidFiled(field: string): boolean | null {
-    return (
-      this.heroForm.controls[field].errors &&
-      this.heroForm.controls[field].touched
-    );
+  public isValidField(field: string): boolean | null {
+    const control = this.heroForm.controls[field];
+    return control.errors && control.touched;
   }
 
   public loadHero(): void {

@@ -98,7 +98,7 @@ describe('HeroesListComponent', () => {
 
     component.searchInput = searchInput;
 
-    component.getHeroes();
+    component.ngOnInit();
 
     expect(component.isLoading()).toBeFalse();
   });
@@ -143,7 +143,7 @@ describe('HeroesListComponent', () => {
 
     heroesServiceSpy.getHeroes.and.returnValue(of(mockHeroes));
 
-    component.getHeroes();
+    component.ngOnInit();
 
     expect(component.isLoading()).toBeFalse();
   });

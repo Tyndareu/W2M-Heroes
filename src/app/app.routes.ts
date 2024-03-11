@@ -7,9 +7,9 @@ export const routes: Routes = [
   {
     path: '404',
     loadComponent: () =>
-      import(
-        './core/components/page-not-found/page-not-found.component'
-      ).then(c => c.PageNotFoundComponent),
+      import('./core/components/page-not-found/page-not-found.component').then(
+        c => c.PageNotFoundComponent
+      ),
   },
   {
     path: '**',

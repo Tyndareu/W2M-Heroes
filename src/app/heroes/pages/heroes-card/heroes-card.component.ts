@@ -13,7 +13,7 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
   templateUrl: './heroes-card.component.html',
 })
 export class HeroesCardComponent {
-  @Input() heroes?: Hero[];
+  @Input() public heroes?: Hero[];
   @Output() deleteHero = new EventEmitter<Hero>();
   @Output() updateAndNavigateHero = new EventEmitter<Hero>();
   @Output() getAllHeroes = new EventEmitter<Hero>();

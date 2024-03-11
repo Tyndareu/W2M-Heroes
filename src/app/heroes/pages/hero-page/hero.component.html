@@ -28,7 +28,7 @@
             formControlName="superhero"
             [value]="heroForm.get('superhero')?.value | uppercase"
             placeholder="Superhero Name" />
-          @if (isValidFiled('superhero')) {
+          @if (isValidField('superhero')) {
             <span class="text-red-500">This field is required</span>
           }
         </mat-form-field>

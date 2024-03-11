@@ -12,13 +12,15 @@ import { LoadingService } from '../../shared/services/loading/loading.service';
 
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
+  private readonly excludedUrls: string[] = ['/heroes?q'];
+
   constructor(private readonly loadingService: LoadingService) {}
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (req.url.includes('/heroes?q')) {
+    if (this.isExcludedUrl(req.url)) {
       return next.handle(req);
     }
     this.loadingService.showLoader();
@@ -27,5 +29,8 @@ export class LoadingInterceptor implements HttpInterceptor {
         this.loadingService.hideLoader();
       })
     );
+  }
+  private isExcludedUrl(url: string): boolean {
+    return this.excludedUrls.some(excludedUrl => url.includes(excludedUrl));
   }
 }

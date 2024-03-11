@@ -43,6 +43,8 @@ export class HeroesListComponent implements OnInit {
   public selectedHero = signal<Hero | undefined>(undefined);
   public isLoading = signal(false);
 
+  private readonly debounceTime = 500;
+
   constructor(
     private readonly heroesService: HeroesService,
     private readonly dialog: MatDialog,
@@ -52,7 +54,7 @@ export class HeroesListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllHeroes();
-    this.getHeroes();
+    this.setupSearchInputListener();
   }
 
   public getAllHeroes(): void {
@@ -63,31 +65,6 @@ export class HeroesListComponent implements OnInit {
         next: heroes => {
           this.allHeroes.set(heroes);
         },
-      });
-  }
-
-  public getHeroes(): void {
-    this.searchInput.valueChanges
-      .pipe(
-        tap(() => {
-          this.isLoading.set(true);
-          this.selectedHero.set(undefined);
-        }),
-        debounceTime(500),
-        map(value => value as string),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe((value: string) => {
-        if (value === '') {
-          return;
-        }
-        this.heroesService.getHeroes(value).subscribe({
-          next: heroes => {
-            this.heroes.set(heroes);
-            this.isLoading.set(false);
-          },
-          error: () => this.isLoading.set(false),
-        });
       });
   }
 
@@ -132,5 +109,30 @@ export class HeroesListComponent implements OnInit {
         });
       }
     });
+  }
+
+  private setupSearchInputListener(): void {
+    this.searchInput.valueChanges
+      .pipe(
+        tap(() => {
+          this.isLoading.set(true);
+          this.selectedHero.set(undefined);
+        }),
+        debounceTime(this.debounceTime),
+        map(value => value as string),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((value: string) => {
+        if (value === '') {
+          return;
+        }
+        this.heroesService.getHeroes(value).subscribe({
+          next: heroes => {
+            this.heroes.set(heroes);
+            this.isLoading.set(false);
+          },
+          error: () => this.isLoading.set(false),
+        });
+      });
   }
 }
