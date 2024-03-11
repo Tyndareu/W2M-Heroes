@@ -8,7 +8,7 @@ export const routes: Routes = [
     path: '404',
     loadComponent: () =>
       import(
-        './shared/components/page-not-found/page-not-found.component'
+        './core/components/page-not-found/page-not-found.component'
       ).then(c => c.PageNotFoundComponent),
   },
   {

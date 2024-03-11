@@ -1,13 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  MatAutocompleteModule,
-  MatAutocompleteSelectedEvent,
+    MatAutocompleteModule,
+    MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogModule,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -56,6 +61,7 @@ describe('HeroesListComponent', () => {
       providers: [
         { provide: HeroesService, useValue: heroesServiceSpy },
         { provide: MatDialog, useValue: dialog },
+        { provide: MAT_DIALOG_DATA, useValue: mockHeroes },
       ],
     }).compileComponents();
 
@@ -139,4 +145,26 @@ describe('HeroesListComponent', () => {
 
     expect(component.isLoading()).toBeFalse();
   });
+  //   it('should get heroes when search input changes', () => {
+  //     const searchValue = 'test';
+  //     const mockFilteredHeroes = [{ id: '2', superhero: 'Hero 2' }];
+
+  //     heroesServiceSpy.getHeroes.and.callFake((value: string | null) => {
+  //       if (value === searchValue) {
+  //         return of(mockFilteredHeroes);
+  //       } else {
+  //         return of([]);
+  //       }
+  //     });
+
+  //     component.searchInput.setValue(searchValue);
+
+  //     expect(component.isLoading()).toBeTrue();
+  //     expect(heroesServiceSpy.getHeroes).toHaveBeenCalledWith(searchValue);
+
+  //     component.heroes().subscribe(heroes => {
+  //       expect(heroes).toEqual(mockFilteredHeroes);
+  //       expect(component.isLoading()).toBeFalse();
+  //     });
+  //   });
 });

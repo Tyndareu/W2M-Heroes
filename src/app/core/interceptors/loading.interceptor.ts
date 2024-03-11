@@ -8,11 +8,11 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { LoadingService } from '../services/loading/loading.service';
+import { LoadingService } from '../../shared/services/loading/loading.service';
 
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
-  constructor(private loadingService: LoadingService) {}
+  constructor(private readonly loadingService: LoadingService) {}
 
   intercept(
     req: HttpRequest<any>,

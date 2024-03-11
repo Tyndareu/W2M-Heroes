@@ -14,7 +14,7 @@ import { catchError, tap } from 'rxjs/operators';
 
 @Injectable()
 export class CRUDResponseInterceptor implements HttpInterceptor {
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(private readonly snackBar: MatSnackBar) {}
 
   intercept(
     request: HttpRequest<unknown>,

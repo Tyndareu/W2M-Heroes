@@ -44,9 +44,9 @@ export class HeroesListComponent implements OnInit {
   public isLoading = signal(false);
 
   constructor(
-    private heroesService: HeroesService,
-    private dialog: MatDialog,
-    private destroyRef: DestroyRef,
+    private readonly heroesService: HeroesService,
+    private readonly dialog: MatDialog,
+    private readonly destroyRef: DestroyRef,
     private readonly router: Router
   ) {}
 
@@ -93,6 +93,7 @@ export class HeroesListComponent implements OnInit {
 
   public onOptionSelected(event: MatAutocompleteSelectedEvent): void {
     const hero: Hero = event.option.value;
+    console.log(event.option);
     if (!hero) {
       return;
     }

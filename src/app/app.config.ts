@@ -8,8 +8,8 @@ import {
 } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
-import { CRUDResponseInterceptor } from './shared/interceptors/crud-response.interceptor';
-import { LoadingInterceptor } from './shared/interceptors/loading.interceptor';
+import { CRUDResponseInterceptor } from './core/interceptors/crud-response.interceptor';
+import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [

@@ -4,7 +4,7 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { LoadingService } from '../services/loading/loading.service';
+import { LoadingService } from '../../shared/services/loading/loading.service';
 import { LoadingInterceptor } from './loading.interceptor';
 
 describe('LoadingInterceptor', () => {

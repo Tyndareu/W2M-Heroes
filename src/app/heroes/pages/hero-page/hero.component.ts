@@ -50,9 +50,9 @@ export class HeroComponent implements OnInit {
   });
 
   constructor(
-    private heroService: HeroesService,
-    private fb: FormBuilder,
-    private destroyRef: DestroyRef,
+    private readonly heroService: HeroesService,
+    private readonly fb: FormBuilder,
+    private readonly destroyRef: DestroyRef,
     private readonly _route: Router
   ) {}
 

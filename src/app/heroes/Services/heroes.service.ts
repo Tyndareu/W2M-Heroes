@@ -11,7 +11,7 @@ export class HeroesService {
   private readonly apiUrl = environment.apiUrl;
   private selectedHero = new BehaviorSubject<Hero | null>(null);
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   public setSelectedHero(hero: Hero): void {
     this.selectedHero.next(hero);
