@@ -1,17 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-    MatAutocompleteModule,
-    MatAutocompleteSelectedEvent,
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import {
-    MAT_DIALOG_DATA,
-    MatDialog,
-    MatDialogModule,
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +23,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
+import { DialogConfirmComponent } from '../../../shared/components/dialog-confirm/dialog-confirm.component';
 import { HeroesService } from '../../Services/heroes.service';
 import { HeroesCardComponent } from '../heroes-card/heroes-card.component';
 import { HeroesListComponent } from './heroes-list.component';
@@ -28,7 +32,7 @@ describe('HeroesListComponent', () => {
   let component: HeroesListComponent;
   let fixture: ComponentFixture<HeroesListComponent>;
   let heroesServiceSpy: jasmine.SpyObj<HeroesService>;
-  let dialogSpy: jasmine.SpyObj<MatDialog>;
+  let dialog: MatDialog;
   const mockHeroes = [{ id: '1', superhero: 'Hero 1' }];
 
   beforeEach(async () => {
@@ -38,9 +42,6 @@ describe('HeroesListComponent', () => {
       'setSelectedHero',
     ]);
     heroesServiceSpy.getHeroes.and.returnValue(of(mockHeroes));
-
-    const dialog = jasmine.createSpyObj('MatDialog', ['open']);
-
     await TestBed.configureTestingModule({
       imports: [
         FormsModule,
@@ -58,17 +59,18 @@ describe('HeroesListComponent', () => {
         RouterTestingModule,
         BrowserAnimationsModule,
       ],
-      providers: [
-        { provide: HeroesService, useValue: heroesServiceSpy },
-        { provide: MatDialog, useValue: dialog },
-        { provide: MAT_DIALOG_DATA, useValue: mockHeroes },
-      ],
+      providers: [{ provide: HeroesService, useValue: heroesServiceSpy }],
     }).compileComponents();
+
+    dialog = TestBed.inject(MatDialog);
+    const dialogRef = {
+      afterClosed: () => of(),
+    } as unknown as MatDialogRef<unknown, unknown>;
+    spyOn(dialog, 'open').and.returnValue(dialogRef);
 
     heroesServiceSpy = TestBed.inject(
       HeroesService
     ) as jasmine.SpyObj<HeroesService>;
-    dialogSpy = TestBed.inject(MatDialog) as jasmine.SpyObj<MatDialog>;
   });
 
   beforeEach(() => {
@@ -145,26 +147,78 @@ describe('HeroesListComponent', () => {
 
     expect(component.isLoading()).toBeFalse();
   });
-  //   it('should get heroes when search input changes', () => {
-  //     const searchValue = 'test';
-  //     const mockFilteredHeroes = [{ id: '2', superhero: 'Hero 2' }];
 
-  //     heroesServiceSpy.getHeroes.and.callFake((value: string | null) => {
-  //       if (value === searchValue) {
-  //         return of(mockFilteredHeroes);
-  //       } else {
-  //         return of([]);
-  //       }
-  //     });
+  it('should delete a hero', () => {
+    const mockDeleteHero = { id: '1', superhero: 'Hero 1' };
+    const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+    dialogRefSpy.afterClosed.and.callFake(() => of(true));
 
-  //     component.searchInput.setValue(searchValue);
+    (dialog.open as jasmine.Spy).and.returnValue(dialogRefSpy);
 
-  //     expect(component.isLoading()).toBeTrue();
-  //     expect(heroesServiceSpy.getHeroes).toHaveBeenCalledWith(searchValue);
+    heroesServiceSpy.deleteHero.and.returnValue(of(mockDeleteHero));
 
-  //     component.heroes().subscribe(heroes => {
-  //       expect(heroes).toEqual(mockFilteredHeroes);
-  //       expect(component.isLoading()).toBeFalse();
-  //     });
-  //   });
+    component.deleteHero(mockDeleteHero);
+
+    expect(dialog.open).toHaveBeenCalledWith(DialogConfirmComponent, {
+      data: {
+        title: 'Delete superhero',
+        text: 'Are you sure you want to delete this super hero?',
+        name: mockDeleteHero.superhero,
+      },
+    });
+    expect(heroesServiceSpy.deleteHero).toHaveBeenCalledWith(mockDeleteHero);
+    expect(component.selectedHero()).toBeUndefined();
+    expect(component.searchInput.value).toBe('');
+  });
+
+  it('should not call getHeroes if search input is empty after debounce', () => {
+    component.searchInput.setValue('test');
+
+    setTimeout(() => {
+      expect(heroesServiceSpy.getHeroes).toHaveBeenCalledTimes(1);
+      expect(heroesServiceSpy.getHeroes).toHaveBeenCalledWith('test');
+
+      component.searchInput.setValue('');
+
+      setTimeout(() => {
+        expect(heroesServiceSpy.getHeroes).toHaveBeenCalledTimes(1);
+      }, 500);
+    }, 500);
+  });
+  it('should call getHeroes with search input value after debounce', () => {
+    component.searchInput.setValue('ironman');
+
+    setTimeout(() => {
+      expect(heroesServiceSpy.getHeroes).toHaveBeenCalledTimes(1);
+      expect(heroesServiceSpy.getHeroes).toHaveBeenCalledWith('ironman');
+    }, 500);
+  });
+  it('should not set selectedHero if no hero is provided', () => {
+    const event = {
+      option: {
+        value: null,
+      },
+    } as MatAutocompleteSelectedEvent;
+
+    const setValueSpy = spyOn(
+      component.searchInput,
+      'setValue'
+    ).and.callThrough();
+    const setHeroSpy = spyOn(component.selectedHero, 'set');
+
+    component.onOptionSelected(event);
+
+    expect(setValueSpy).not.toHaveBeenCalled();
+    expect(setHeroSpy).not.toHaveBeenCalled();
+  });
+  it('should call getHeroes service method when value is not empty', fakeAsync(() => {
+    const value = 'Superman';
+    const mockHeroes = [{ id: '1', superhero: 'Superman' }];
+    const getHeroesSpy = heroesServiceSpy.getHeroes.and.returnValue(
+      of(mockHeroes)
+    );
+    component.searchInput.setValue(value);
+    tick(501);
+    expect(getHeroesSpy).toHaveBeenCalledWith(value);
+  }));
 });

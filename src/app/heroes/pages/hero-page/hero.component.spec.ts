@@ -97,4 +97,65 @@ describe('HeroComponent', () => {
 
     expect(isValid).toBeTruthy();
   });
+  it('should mark all form fields as touched if form is invalid', () => {
+    component.heroForm.get('superhero')?.setValue('');
+    const markAllAsTouchedSpy = spyOn(component.heroForm, 'markAllAsTouched');
+
+    component.onSubmit();
+
+    expect(markAllAsTouchedSpy).toHaveBeenCalled();
+  });
+  it('should call updateHero when submitting valid form for an existing hero', () => {
+    const mockHero: Hero = {
+      id: '1',
+      img: 'hero-img-url',
+      superhero: 'Test Superhero',
+      publisher: 'Test Publisher',
+      alter_ego: 'Test Alter Ego',
+      first_appearance: 'Test First Appearance',
+      alt_img: 'test-alt-img-url',
+    };
+    const updateHeroSpy = heroesServiceSpy.updateHero.and.returnValue(
+      of(mockHero)
+    );
+    const navigateSpy = spyOn(component['_route'], 'navigate').and.returnValue(
+      Promise.resolve(true)
+    );
+    component.heroID = '1';
+    component.heroForm.patchValue(mockHero);
+    component.onSubmit();
+    expect(updateHeroSpy).toHaveBeenCalledWith(mockHero);
+    expect(navigateSpy).toHaveBeenCalledWith(['/heroes/heroes-list']);
+  });
+  it('should call newHero when submitting valid form for a new hero', () => {
+    const mockHero: Hero = {
+      id: '',
+      img: 'hero-img-url',
+      superhero: 'Test Superhero',
+      publisher: 'Test Publisher',
+      alter_ego: 'Test Alter Ego',
+      first_appearance: 'Test First Appearance',
+      alt_img: 'test-alt-img-url',
+    };
+    const newHeroSpy = heroesServiceSpy.newHero.and.returnValue(of(mockHero));
+    const navigateSpy = spyOn(component['_route'], 'navigate').and.returnValue(
+      Promise.resolve(true)
+    );
+
+    component.heroForm.patchValue(mockHero);
+    component.heroID = 'new';
+    component.onSubmit();
+    expect(newHeroSpy).toHaveBeenCalled;
+    expect(navigateSpy).toHaveBeenCalledWith(['/heroes/heroes-list']);
+  });
+
+  it('should not call any service and not navigate if the form is invalid', () => {
+    const invalidForm: FormGroup = new FormBuilder().group({
+      superhero: ['', Validators.required],
+    });
+    component.heroForm = invalidForm;
+    component.onSubmit();
+    expect(heroesServiceSpy.newHero).not.toHaveBeenCalled();
+    expect(heroesServiceSpy.updateHero).not.toHaveBeenCalled();
+  });
 });
