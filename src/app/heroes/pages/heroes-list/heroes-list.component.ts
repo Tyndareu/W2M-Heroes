@@ -70,7 +70,6 @@ export class HeroesListComponent implements OnInit {
 
   public onOptionSelected(event: MatAutocompleteSelectedEvent): void {
     const hero: Hero = event.option.value;
-    console.log(event.option);
     if (!hero) {
       return;
     }

@@ -19,11 +19,12 @@ export class LoadingInterceptor implements HttpInterceptor {
     req: HttpRequest<T>,
     next: HttpHandler
   ): Observable<HttpEvent<T>> {
-    if (this.isExcludedUrl(req.url)) {
-      return next.handle(req);
+    const cloneReq = req.clone();
+    if (this.isExcludedUrl(cloneReq.url)) {
+      return next.handle(cloneReq);
     }
     this.loadingService.showLoader();
-    return next.handle(req).pipe(
+    return next.handle(cloneReq).pipe(
       finalize(() => {
         this.loadingService.hideLoader();
       })

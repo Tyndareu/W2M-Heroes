@@ -55,28 +55,33 @@
           <mat-label>Img URL</mat-label>
           <input matInput formControlName="alt_img" placeholder="Image URL" />
         </mat-form-field>
+        <div class="flex w-40 flex-col gap-2">
+          <button
+            type="button"
+            (click)="onSubmit()"
+            mat-raised-button
+            color="primary">
+            Submit <mat-icon>create</mat-icon>
+          </button>
+          <button
+            (click)="resetForm()"
+            mat-raised-button
+            color="accent"
+            type="button">
+            Clear
+            <mat-icon>clear</mat-icon>
+          </button>
+          <button
+            type="button"
+            [routerLink]="['/heroes/heroes-list']"
+            mat-raised-button
+            color="warn"
+            type="button">
+            Cancel
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </div>
       </form>
-      <div class="flex w-40 flex-col gap-4">
-        <button (click)="onSubmit()" mat-raised-button color="primary">
-          Submit <mat-icon>create</mat-icon>
-        </button>
-        <button
-          (click)="resetForm()"
-          mat-raised-button
-          color="accent"
-          type="submit">
-          Clear
-          <mat-icon>clear</mat-icon>
-        </button>
-        <button
-          [routerLink]="['/heroes/heroes-list']"
-          mat-raised-button
-          color="warn"
-          type="submit">
-          Cancel
-          <mat-icon>cancel</mat-icon>
-        </button>
-      </div>
     </div>
   } @else {
     <div class="text-center">

@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
   }
 
   private setIsLoading(): void {
-    this.loadingService.isLoadingSubject.subscribe({
+    this.loadingService.isLoadingSubject$.subscribe({
       next: value => this.isLoading.set(value),
     });
   }

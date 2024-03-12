@@ -35,7 +35,7 @@ describe('AppComponent', () => {
   });
   it('should subscribe to isLoadingSubject on setIsLoading', () => {
     const subjectSpy = new BehaviorSubject<boolean>(false);
-    loadingService.isLoadingSubject = subjectSpy.asObservable();
+    loadingService.isLoadingSubject$ = subjectSpy.asObservable();
     component.ngOnInit();
     expect(component.isLoading()).toBeFalse();
     subjectSpy.next(true);

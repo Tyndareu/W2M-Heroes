@@ -22,11 +22,13 @@ export class CRUDResponseInterceptor implements HttpInterceptor {
   constructor(private readonly snackBar: MatSnackBar) {}
 
   intercept<T>(
-    request: HttpRequest<T>,
+    req: HttpRequest<T>,
     next: HttpHandler
   ): Observable<HttpEvent<T>> {
-    const method = request.method.toUpperCase();
-    return next.handle(request).pipe(
+    const cloneReq = req.clone();
+
+    const method = cloneReq.method.toUpperCase();
+    return next.handle(cloneReq).pipe(
       tap((event: HttpEvent<T>) => {
         if (event instanceof HttpResponse) {
           this.showSuccessSnackbar(method);

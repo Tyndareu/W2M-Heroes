@@ -14,16 +14,16 @@ describe('LoadingService', () => {
   });
 
   it('should have initial isLoadingSubject value of false', () => {
-    expect(service.isLoadingSubject.getValue()).toBeFalse();
+    expect(service.isLoadingSubject$.getValue()).toBeFalse();
   });
 
   it('should show loader when showLoader is called', () => {
     service.showLoader();
-    expect(service.isLoadingSubject.getValue()).toBeTrue();
+    expect(service.isLoadingSubject$.getValue()).toBeTrue();
   });
 
   it('should hide loader when hideLoader is called', () => {
     service.hideLoader();
-    expect(service.isLoadingSubject.getValue()).toBeFalse();
+    expect(service.isLoadingSubject$.getValue()).toBeFalse();
   });
 });
