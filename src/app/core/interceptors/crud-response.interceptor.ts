@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   HttpErrorResponse,
   HttpEvent,
@@ -22,13 +21,13 @@ export class CRUDResponseInterceptor implements HttpInterceptor {
 
   constructor(private readonly snackBar: MatSnackBar) {}
 
-  intercept(
-    request: HttpRequest<unknown>,
+  intercept<T>(
+    request: HttpRequest<T>,
     next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
+  ): Observable<HttpEvent<T>> {
     const method = request.method.toUpperCase();
     return next.handle(request).pipe(
-      tap((event: HttpEvent<any>) => {
+      tap((event: HttpEvent<T>) => {
         if (event instanceof HttpResponse) {
           this.showSuccessSnackbar(method);
         }

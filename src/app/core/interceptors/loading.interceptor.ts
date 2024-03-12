@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   HttpEvent,
   HttpHandler,
@@ -16,10 +15,10 @@ export class LoadingInterceptor implements HttpInterceptor {
 
   constructor(private readonly loadingService: LoadingService) {}
 
-  intercept(
-    req: HttpRequest<any>,
+  intercept<T>(
+    req: HttpRequest<T>,
     next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  ): Observable<HttpEvent<T>> {
     if (this.isExcludedUrl(req.url)) {
       return next.handle(req);
     }
