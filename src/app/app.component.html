@@ -3,5 +3,5 @@
 }
 
 <div class="container-main">
-  <router-outlet />
+  <router-outlet [hidden]="isLoading()" />
 </div>
