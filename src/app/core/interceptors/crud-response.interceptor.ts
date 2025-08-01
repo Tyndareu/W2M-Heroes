@@ -13,9 +13,9 @@ import { catchError, tap } from 'rxjs/operators';
 
 @Injectable()
 export class CRUDResponseInterceptor implements HttpInterceptor {
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly _snackBar = inject(MatSnackBar);
 
-  private readonly snackbarConfig: MatSnackBarConfig = {
+  private readonly _snackbarConfig: MatSnackBarConfig = {
     verticalPosition: 'top',
     horizontalPosition: 'right',
     duration: 3000,
@@ -31,18 +31,18 @@ export class CRUDResponseInterceptor implements HttpInterceptor {
     return next.handle(cloneReq).pipe(
       tap((event: HttpEvent<T>) => {
         if (event instanceof HttpResponse) {
-          this.showSuccessSnackbar(method);
+          this._showSuccessSnackbar(method);
         }
       }),
       catchError((error: HttpErrorResponse) => {
-        const errorMessage = this.getErrorMessage(error);
-        this.showErrorSnackbar(method, errorMessage);
+        const errorMessage = this._getErrorMessage(error);
+        this._showErrorSnackbar(method, errorMessage);
         return throwError(() => error);
       })
     );
   }
 
-  private showSuccessSnackbar(method: string): void {
+  private _showSuccessSnackbar(method: string): void {
     if (method === 'GET') {
       return;
     }
@@ -63,10 +63,10 @@ export class CRUDResponseInterceptor implements HttpInterceptor {
         break;
     }
 
-    this.showSnackbar(message, 'snackbar-success');
+    this._showSnackbar(message, 'snackbar-success');
   }
 
-  private showErrorSnackbar(method: string, errorMessage: string): void {
+  private _showErrorSnackbar(method: string, errorMessage: string): void {
     let message: string;
     switch (method) {
       case 'GET':
@@ -87,15 +87,15 @@ export class CRUDResponseInterceptor implements HttpInterceptor {
     }
     message += ` ${errorMessage}`;
 
-    this.showSnackbar(message, 'snackbar-error');
+    this._showSnackbar(message, 'snackbar-error');
   }
 
-  private showSnackbar(message: string, panelClass: string): void {
-    this.snackbarConfig.panelClass = [panelClass];
-    this.snackBar.open(message, 'Close', this.snackbarConfig);
+  private _showSnackbar(message: string, panelClass: string): void {
+    this._snackbarConfig.panelClass = [panelClass];
+    this._snackBar.open(message, 'Close', this._snackbarConfig);
   }
 
-  private getErrorMessage(error: HttpErrorResponse): string {
+  private _getErrorMessage(error: HttpErrorResponse): string {
     return error.error instanceof ErrorEvent
       ? error.error.message
       : `${error.status} ${error.statusText}`;

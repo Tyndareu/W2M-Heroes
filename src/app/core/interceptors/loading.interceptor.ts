@@ -11,26 +11,26 @@ import { LoadingService } from '../../shared/services/loading/loading.service';
 
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
-  private readonly loadingService = inject(LoadingService);
+  private readonly _loadingService = inject(LoadingService);
 
-  private readonly excludedUrls: string[] = ['/heroes?q'];
+  private readonly _excludedUrls: string[] = ['/heroes?q'];
 
   intercept<T>(
     req: HttpRequest<T>,
     next: HttpHandler
   ): Observable<HttpEvent<T>> {
     const cloneReq = req.clone();
-    if (this.isExcludedUrl(cloneReq.url)) {
+    if (this._isExcludedUrl(cloneReq.url)) {
       return next.handle(cloneReq);
     }
-    this.loadingService.showLoader();
+    this._loadingService.showLoader();
     return next.handle(cloneReq).pipe(
       finalize(() => {
-        this.loadingService.hideLoader();
+        this._loadingService.hideLoader();
       })
     );
   }
-  private isExcludedUrl(url: string): boolean {
-    return this.excludedUrls.some(excludedUrl => url.includes(excludedUrl));
+  private _isExcludedUrl(url: string): boolean {
+    return this._excludedUrls.some(excludedUrl => url.includes(excludedUrl));
   }
 }

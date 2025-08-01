@@ -14,17 +14,4 @@ export class HeroesCardComponent {
   public heroes = input.required<Hero[]>();
   readonly deleteHero = output<Hero>();
   readonly updateAndNavigateHero = output<Hero>();
-  readonly getAllHeroes = output<void>();
-
-  public onDeleteHero(hero: Hero): void {
-    this.deleteHero.emit(hero);
-  }
-
-  public onUpdateAndNavigateHero(hero: Hero): void {
-    this.updateAndNavigateHero.emit(hero);
-  }
-
-  public onGetAllHeroes(): void {
-    this.getAllHeroes.emit();
-  }
 }

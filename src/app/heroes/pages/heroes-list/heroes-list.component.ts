@@ -1,5 +1,5 @@
-import { Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { debounceTime, map, take, tap } from 'rxjs';
+import { debounceTime, map, tap } from 'rxjs';
 import { DialogConfirmComponent } from '../../../shared/components/dialog-confirm/dialog-confirm.component';
 import { HeroesService } from '../../Services/heroes.service';
 import { Hero } from '../../interfaces/hero.interface';
@@ -36,33 +36,21 @@ import { HeroesCardComponent } from '../heroes-card/heroes-card.component';
   templateUrl: './heroes-list.component.html',
 })
 export class HeroesListComponent implements OnInit {
-  private readonly heroesService = inject(HeroesService);
-  private readonly dialog = inject(MatDialog);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly router = inject(Router);
+  private readonly _heroesService = inject(HeroesService);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _destroyRef = inject(DestroyRef);
+  private readonly _router = inject(Router);
 
   public searchInput = new FormControl('');
   public heroes = signal<Hero[]>([]);
-  public allHeroes = signal<Hero[] | null>(null);
+  public allHeroes = toSignal(this._heroesService.getHeroes(null));
   public selectedHero = signal<Hero | undefined>(undefined);
   public isLoading = signal(false);
 
-  private readonly debounceTime = 500;
+  private readonly _debounceTime = 500;
 
   ngOnInit(): void {
-    this.getAllHeroes();
     this.setupSearchInputListener();
-  }
-
-  public getAllHeroes(): void {
-    this.heroesService
-      .getHeroes(null)
-      .pipe(take(1))
-      .subscribe({
-        next: heroes => {
-          this.allHeroes.set(heroes);
-        },
-      });
   }
 
   public onOptionSelected(event: MatAutocompleteSelectedEvent): void {
@@ -81,12 +69,12 @@ export class HeroesListComponent implements OnInit {
   }
 
   public updateAndNavigateHero(hero: Hero): void {
-    this.heroesService.setSelectedHero(hero);
-    this.router.navigate(['/heroes/hero', hero.id]);
+    this._heroesService.setSelectedHero(hero);
+    this._router.navigate(['/heroes/hero', hero.id]);
   }
 
   public deleteHero(hero: Hero): void {
-    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+    const dialogRef = this._dialog.open(DialogConfirmComponent, {
       data: {
         title: 'Delete superhero',
         text: 'Are you sure you want to delete this super hero?',
@@ -96,9 +84,8 @@ export class HeroesListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.heroesService.deleteHero(hero).subscribe({
+        this._heroesService.deleteHero(hero).subscribe({
           next: () => {
-            this.getAllHeroes();
             this.selectedHero.set(undefined);
             this.searchInput.setValue('');
           },
@@ -114,15 +101,15 @@ export class HeroesListComponent implements OnInit {
           this.isLoading.set(true);
           this.selectedHero.set(undefined);
         }),
-        debounceTime(this.debounceTime),
+        debounceTime(this._debounceTime),
         map(value => value as string),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this._destroyRef)
       )
       .subscribe((value: string) => {
         if (value === '') {
           return;
         }
-        this.heroesService.getHeroes(value).subscribe({
+        this._heroesService.getHeroes(value).subscribe({
           next: heroes => {
             this.heroes.set(heroes);
             this.isLoading.set(false);
