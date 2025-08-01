@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { debounceTime, map, take, tap } from 'rxjs';
+import { debounceTime, map, tap } from 'rxjs';
 import { DialogConfirmComponent } from '../../../shared/components/dialog-confirm/dialog-confirm.component';
 import { HeroesService } from '../../Services/heroes.service';
 import { Hero } from '../../interfaces/hero.interface';
@@ -58,14 +58,11 @@ export class HeroesListComponent implements OnInit {
   }
 
   public getAllHeroes(): void {
-    this.heroesService
-      .getHeroes(null)
-      .pipe(take(1))
-      .subscribe({
-        next: heroes => {
-          this.allHeroes.set(heroes);
-        },
-      });
+    this.heroesService.getHeroes(null).subscribe({
+      next: heroes => {
+        this.allHeroes.set(heroes);
+      },
+    });
   }
 
   public onOptionSelected(event: MatAutocompleteSelectedEvent): void {
