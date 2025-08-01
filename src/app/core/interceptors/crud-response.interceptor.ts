@@ -67,13 +67,16 @@ export class CRUDResponseInterceptor implements HttpInterceptor {
 
     const prefix =
       messagePrefixes[method] ||
-      'An error occurred while processing your request:';
+      `An error occurred during the ${method} request:`;
     this._showSnackbar(`${prefix} ${errorMessage}`, 'snackbar-error');
   }
 
   private _showSnackbar(message: string, panelClass: string): void {
-    this._snackbarConfig.panelClass = [panelClass];
-    this._snackBar.open(message, 'Close', this._snackbarConfig);
+    const config: MatSnackBarConfig = {
+      ...this._snackbarConfig,
+      panelClass: [panelClass],
+    };
+    this._snackBar.open(message, 'Close', config);
   }
 
   private _getErrorMessage(error: HttpErrorResponse): string {
