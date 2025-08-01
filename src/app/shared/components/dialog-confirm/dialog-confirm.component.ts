@@ -4,10 +4,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogConfirm } from '../../interfaces/dialog-confirm.interface';
 
 @Component({
-  selector: 'app-dialog-confirm',
-  standalone: true,
-  imports: [MatButtonModule],
-  templateUrl: './dialog-confirm.component.html',
+    selector: 'app-dialog-confirm',
+    imports: [MatButtonModule],
+    templateUrl: './dialog-confirm.component.html'
 })
 export class DialogConfirmComponent {
   dialogRef = inject<MatDialogRef<DialogConfirmComponent>>(MatDialogRef);

@@ -20,21 +20,20 @@ import { Hero } from '../../interfaces/hero.interface';
 import { HeroesCardComponent } from '../heroes-card/heroes-card.component';
 
 @Component({
-  selector: 'app-search-page',
-  standalone: true,
-  imports: [
-    FormsModule,
-    HeroesCardComponent,
-    MatAutocompleteModule,
-    MatButtonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './heroes-list.component.html',
+    selector: 'app-search-page',
+    imports: [
+        FormsModule,
+        HeroesCardComponent,
+        MatAutocompleteModule,
+        MatButtonModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatProgressSpinnerModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './heroes-list.component.html'
 })
 export class HeroesListComponent implements OnInit {
   private readonly heroesService = inject(HeroesService);

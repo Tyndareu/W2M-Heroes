@@ -6,11 +6,9 @@ import { Hero } from '../../interfaces/hero.interface';
 import { HeroImagePipe } from '../../pipes/hero-image.pipe';
 
 @Component({
-  selector: 'app-heroes-card',
-  standalone: true,
-  imports: [CommonModule, HeroImagePipe, MatButtonModule, MatCardModule],
-
-  templateUrl: './heroes-card.component.html',
+    selector: 'app-heroes-card',
+    imports: [CommonModule, HeroImagePipe, MatButtonModule, MatCardModule],
+    templateUrl: './heroes-card.component.html'
 })
 export class HeroesCardComponent {
   @Input() public heroes?: Hero[];

@@ -7,18 +7,17 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-layout-page',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatListModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    RouterLink,
-    RouterOutlet,
-  ],
-  templateUrl: './layout-page.component.html',
+    selector: 'app-layout-page',
+    imports: [
+        MatButtonModule,
+        MatIconModule,
+        MatListModule,
+        MatSidenavModule,
+        MatToolbarModule,
+        RouterLink,
+        RouterOutlet,
+    ],
+    templateUrl: './layout-page.component.html'
 })
 export class LayoutPageComponent {
   public sideBarItems = [
