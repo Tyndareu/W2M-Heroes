@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -37,6 +37,11 @@ import { HeroesCardComponent } from '../heroes-card/heroes-card.component';
   templateUrl: './heroes-list.component.html',
 })
 export class HeroesListComponent implements OnInit {
+  private readonly heroesService = inject(HeroesService);
+  private readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+
   public searchInput = new FormControl('');
   public heroes = signal<Hero[]>([]);
   public allHeroes = signal<Hero[] | null>(null);
@@ -44,13 +49,6 @@ export class HeroesListComponent implements OnInit {
   public isLoading = signal(false);
 
   private readonly debounceTime = 500;
-
-  constructor(
-    private readonly heroesService: HeroesService,
-    private readonly dialog: MatDialog,
-    private readonly destroyRef: DestroyRef,
-    private readonly router: Router
-  ) {}
 
   ngOnInit(): void {
     this.getAllHeroes();

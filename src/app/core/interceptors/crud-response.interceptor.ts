@@ -6,20 +6,20 @@ import {
   HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 @Injectable()
 export class CRUDResponseInterceptor implements HttpInterceptor {
+  private readonly snackBar = inject(MatSnackBar);
+
   private readonly snackbarConfig: MatSnackBarConfig = {
     verticalPosition: 'top',
     horizontalPosition: 'right',
     duration: 3000,
   };
-
-  constructor(private readonly snackBar: MatSnackBar) {}
 
   intercept<T>(
     req: HttpRequest<T>,

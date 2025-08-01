@@ -4,16 +4,16 @@ import {
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { LoadingService } from '../../shared/services/loading/loading.service';
 
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
-  private readonly excludedUrls: string[] = ['/heroes?q'];
+  private readonly loadingService = inject(LoadingService);
 
-  constructor(private readonly loadingService: LoadingService) {}
+  private readonly excludedUrls: string[] = ['/heroes?q'];
 
   intercept<T>(
     req: HttpRequest<T>,

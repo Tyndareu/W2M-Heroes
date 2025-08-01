@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, of, switchMap, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Hero } from '../interfaces/hero.interface';
@@ -8,10 +8,10 @@ import { Hero } from '../interfaces/hero.interface';
   providedIn: 'root',
 })
 export class HeroesService {
+  private readonly http = inject(HttpClient);
+
   private readonly apiUrl: string = environment.apiUrl;
   private readonly selectedHero$ = new BehaviorSubject<Hero | null>(null);
-
-  constructor(private readonly http: HttpClient) {}
 
   public setSelectedHero(hero: Hero): void {
     this.selectedHero$.next(hero);

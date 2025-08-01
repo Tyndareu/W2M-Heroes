@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, Input, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  Input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
@@ -36,6 +43,11 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
   templateUrl: './hero.component.html',
 })
 export class HeroComponent implements OnInit {
+  private readonly heroService = inject(HeroesService);
+  private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+
   @Input() public heroID!: string;
 
   public hero = signal<Hero | null>(null);
@@ -51,12 +63,7 @@ export class HeroComponent implements OnInit {
     alt_img: null,
   };
 
-  constructor(
-    private readonly heroService: HeroesService,
-    private readonly fb: FormBuilder,
-    private readonly destroyRef: DestroyRef,
-    private readonly router: Router
-  ) {
+  constructor() {
     this.heroForm = this.fb.group(this.formControls);
   }
 
