@@ -11,5 +11,6 @@ The frontend will be available at `http://localhost:4200/`. The application will
 ### Running servers separately
 
 If you prefer, you can run the servers in separate terminals:
-*   For the backend server, run `npm run backend`.
-*   For the frontend dev server, run `ng serve`.
+
+- For the backend server, run `npm run backend`.
+- For the frontend dev server, run `ng serve`.
