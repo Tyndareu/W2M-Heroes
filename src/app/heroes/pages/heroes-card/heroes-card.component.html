@@ -1,6 +1,6 @@
-@if (heroes) {
+@if (heroes()) {
   <div class="flex flex-wrap justify-center gap-10 bg-chill-950 p-5">
-    @for (hero of heroes; track $index) {
+    @for (hero of heroes(); track $index) {
       <mat-card class="relative w-80 pb-12">
         <mat-card-header>
           <div mat-card-avatar class="bg-cover"></div>

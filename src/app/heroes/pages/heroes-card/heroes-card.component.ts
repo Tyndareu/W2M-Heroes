@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { Hero } from '../../interfaces/hero.interface';
@@ -11,7 +11,7 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
   templateUrl: './heroes-card.component.html',
 })
 export class HeroesCardComponent {
-  @Input() public heroes?: Hero[];
+  public heroes = input.required<Hero[]>();
   readonly deleteHero = output<Hero>();
   readonly updateAndNavigateHero = output<Hero>();
   readonly getAllHeroes = output<void>();

@@ -3,7 +3,7 @@ import {
   Component,
   DestroyRef,
   inject,
-  Input,
+  input,
   OnInit,
   signal,
 } from '@angular/core';
@@ -47,8 +47,7 @@ export class HeroComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
 
-  @Input() public heroID!: string;
-
+  public heroID = input.required<string>();
   public hero = signal<Hero | null>(null);
   public heroForm: FormGroup;
 
@@ -67,7 +66,7 @@ export class HeroComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.heroID !== 'new') {
+    if (this.heroID() !== 'new') {
       this.loadHero();
     }
   }
@@ -79,10 +78,10 @@ export class HeroComponent implements OnInit {
     }
     const formData: Hero = { ...this.heroForm.value };
     formData.superhero = this.toTitleCase(formData.superhero);
-    formData.id = this.heroID === 'new' ? crypto.randomUUID() : this.heroID;
+    formData.id = this.heroID() === 'new' ? crypto.randomUUID() : this.heroID();
 
     const saveHero$ =
-      this.heroID !== 'new'
+      this.heroID() !== 'new'
         ? this.heroService.updateHero(formData)
         : this.heroService.newHero(formData);
 
@@ -97,9 +96,9 @@ export class HeroComponent implements OnInit {
   }
 
   public loadHero(): void {
-    if (!this.heroID) return;
+    if (!this.heroID()) return;
     this.heroService
-      .selectedHeroWithGetById(this.heroID!)
+      .selectedHeroWithGetById(this.heroID())
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         map(hero => ({
