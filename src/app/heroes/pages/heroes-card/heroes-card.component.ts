@@ -14,7 +14,7 @@ export class HeroesCardComponent {
   @Input() public heroes?: Hero[];
   readonly deleteHero = output<Hero>();
   readonly updateAndNavigateHero = output<Hero>();
-  readonly getAllHeroes = output<Hero>();
+  readonly getAllHeroes = output<void>();
 
   public onDeleteHero(hero: Hero): void {
     this.deleteHero.emit(hero);
@@ -25,7 +25,6 @@ export class HeroesCardComponent {
   }
 
   public onGetAllHeroes(): void {
-    // TODO: The 'emit' function requires a mandatory Hero argument
     this.getAllHeroes.emit();
   }
 }
