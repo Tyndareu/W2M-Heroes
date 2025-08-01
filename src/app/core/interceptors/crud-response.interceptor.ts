@@ -43,51 +43,32 @@ export class CRUDResponseInterceptor implements HttpInterceptor {
   }
 
   private _showSuccessSnackbar(method: string): void {
-    if (method === 'GET') {
-      return;
-    }
+    const messages: { [key: string]: string } = {
+      PUT: 'Data has been updated successfully.',
+      POST: 'Data has been created successfully.',
+      DELETE: 'Data has been deleted successfully.',
+    };
 
-    let message: string;
-    switch (method) {
-      case 'PUT':
-        message = `Data has been updated successfully.`;
-        break;
-      case 'POST':
-        message = `Data has been created successfully.`;
-        break;
-      case 'DELETE':
-        message = `Data has been deleted successfully.`;
-        break;
-      default:
-        message = `The ${method} request has been successful.`;
-        break;
-    }
+    const message =
+      messages[method] || `The ${method} request has been successful.`;
 
-    this._showSnackbar(message, 'snackbar-success');
+    if (method !== 'GET') {
+      this._showSnackbar(message, 'snackbar-success');
+    }
   }
 
   private _showErrorSnackbar(method: string, errorMessage: string): void {
-    let message: string;
-    switch (method) {
-      case 'GET':
-        message = `An error occurred while retrieving data:`;
-        break;
-      case 'PUT':
-        message = `An error occurred while updating data:`;
-        break;
-      case 'POST':
-        message = `An error occurred while creating data:`;
-        break;
-      case 'DELETE':
-        message = `An error occurred while deleting data:`;
-        break;
-      default:
-        message = `An error occurred during the ${method} request:`;
-        break;
-    }
-    message += ` ${errorMessage}`;
+    const messagePrefixes: { [key: string]: string } = {
+      GET: 'An error occurred while retrieving data:',
+      PUT: 'An error occurred while updating data:',
+      POST: 'An error occurred while creating data:',
+      DELETE: 'An error occurred while deleting data:',
+    };
 
-    this._showSnackbar(message, 'snackbar-error');
+    const prefix =
+      messagePrefixes[method] ||
+      'An error occurred while processing your request:';
+    this._showSnackbar(`${prefix} ${errorMessage}`, 'snackbar-error');
   }
 
   private _showSnackbar(message: string, panelClass: string): void {
