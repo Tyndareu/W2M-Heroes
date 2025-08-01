@@ -4,9 +4,9 @@ import { LoadingComponent } from './core/components/loading/loading.component';
 import { LoadingService } from './shared/services/loading/loading.service';
 
 @Component({
-    selector: 'app-root',
-    imports: [RouterOutlet, LoadingComponent],
-    templateUrl: './app.component.html'
+  selector: 'app-root',
+  imports: [RouterOutlet, LoadingComponent],
+  templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
   private readonly loadingService = inject(LoadingService);

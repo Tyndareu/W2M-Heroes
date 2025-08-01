@@ -26,20 +26,20 @@ import { Hero } from '../../interfaces/hero.interface';
 import { HeroImagePipe } from '../../pipes/hero-image.pipe';
 
 @Component({
-    selector: 'app-hero',
-    imports: [
-        CommonModule,
-        HeroImagePipe,
-        MatButtonModule,
-        MatCardModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatInputModule,
-        MatLabel,
-        ReactiveFormsModule,
-        RouterLink,
-    ],
-    templateUrl: './hero.component.html'
+  selector: 'app-hero',
+  imports: [
+    CommonModule,
+    HeroImagePipe,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatLabel,
+    ReactiveFormsModule,
+    RouterLink,
+  ],
+  templateUrl: './hero.component.html',
 })
 export class HeroComponent implements OnInit {
   private readonly heroService = inject(HeroesService);

@@ -1,20 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { Hero } from '../../interfaces/hero.interface';
 import { HeroImagePipe } from '../../pipes/hero-image.pipe';
 
 @Component({
-    selector: 'app-heroes-card',
-    imports: [CommonModule, HeroImagePipe, MatButtonModule, MatCardModule],
-    templateUrl: './heroes-card.component.html'
+  selector: 'app-heroes-card',
+  imports: [CommonModule, HeroImagePipe, MatButtonModule, MatCardModule],
+  templateUrl: './heroes-card.component.html',
 })
 export class HeroesCardComponent {
   @Input() public heroes?: Hero[];
-  @Output() deleteHero = new EventEmitter<Hero>();
-  @Output() updateAndNavigateHero = new EventEmitter<Hero>();
-  @Output() getAllHeroes = new EventEmitter<Hero>();
+  readonly deleteHero = output<Hero>();
+  readonly updateAndNavigateHero = output<Hero>();
+  readonly getAllHeroes = output<Hero>();
 
   public onDeleteHero(hero: Hero): void {
     this.deleteHero.emit(hero);
@@ -25,6 +25,7 @@ export class HeroesCardComponent {
   }
 
   public onGetAllHeroes(): void {
+    // TODO: The 'emit' function requires a mandatory Hero argument
     this.getAllHeroes.emit();
   }
 }
