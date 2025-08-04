@@ -1,5 +1,5 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -43,7 +43,7 @@ export class HeroesListComponent implements OnInit {
 
   public searchInput = new FormControl('');
   public heroes = signal<Hero[]>([]);
-  public allHeroes = toSignal(this._heroesService.getHeroes(null));
+  public allHeroes = signal<Hero[] | undefined>(undefined);
   public selectedHero = signal<Hero | undefined>(undefined);
   public isLoading = signal(false);
 
@@ -51,6 +51,13 @@ export class HeroesListComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupSearchInputListener();
+    this.getAllHeroes();
+  }
+
+  public getAllHeroes(): void {
+    this._heroesService
+      .getHeroes(null)
+      .subscribe(heroes => this.allHeroes.set(heroes));
   }
 
   public onOptionSelected(event: MatAutocompleteSelectedEvent): void {
@@ -88,6 +95,7 @@ export class HeroesListComponent implements OnInit {
           next: () => {
             this.selectedHero.set(undefined);
             this.searchInput.setValue('');
+            this.getAllHeroes();
           },
         });
       }
