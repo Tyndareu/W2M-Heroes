@@ -1,8 +1,8 @@
 <div class="flex flex-col items-center bg-chill-950 p-5 text-center">
-  @if (hero() || heroID === 'new') {
+  @if (hero() || heroID() === 'new') {
     <h1 class="py-5 text-center text-3xl text-white">
       {{
-        heroID === 'new'
+        heroID() === 'new'
           ? 'New Hero'
           : heroForm.value.superhero
             ? 'Edit Hero - ' + heroForm.value.superhero.toUpperCase()

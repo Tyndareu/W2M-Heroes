@@ -2,10 +2,12 @@ import {
   HTTP_INTERCEPTORS,
   HttpClient,
   HttpResponse,
+  provideHttpClient,
+  withInterceptorsFromDi,
 } from '@angular/common/http';
 import {
-  HttpClientTestingModule,
   HttpTestingController,
+  provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -20,7 +22,7 @@ describe('CRUDResponseInterceptor', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, BrowserAnimationsModule],
+      imports: [BrowserAnimationsModule],
       providers: [
         CRUDResponseInterceptor,
         {
@@ -29,6 +31,8 @@ describe('CRUDResponseInterceptor', () => {
           multi: true,
         },
         MatSnackBar,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
     });
     interceptor = TestBed.inject(CRUDResponseInterceptor);

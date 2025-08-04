@@ -8,7 +8,6 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-layout-page',
-  standalone: true,
   imports: [
     MatButtonModule,
     MatIconModule,

@@ -51,15 +51,13 @@
       <app-heroes-card
         [heroes]="[selectedHero()!]"
         (deleteHero)="deleteHero($event)"
-        (updateAndNavigateHero)="updateAndNavigateHero($event)"
-        (getAllHeroes)="getAllHeroes()" />
+        (updateAndNavigateHero)="updateAndNavigateHero($event)" />
     } @else {
       <h1 class="py-5 text-center text-3xl text-white">List of Heroes</h1>
       <app-heroes-card
         [heroes]="allHeroes()!"
         (deleteHero)="deleteHero($event)"
-        (updateAndNavigateHero)="updateAndNavigateHero($event)"
-        (getAllHeroes)="getAllHeroes()" />
+        (updateAndNavigateHero)="updateAndNavigateHero($event)" />
     }
   </div>
 } @else {
@@ -71,11 +69,6 @@
       <mat-card-content>
         <p>Sorry, an error occurred while loading the data.</p>
       </mat-card-content>
-      <mat-card-actions class="flex justify-center">
-        <button mat-raised-button color="primary" (click)="getAllHeroes()">
-          Try again
-        </button>
-      </mat-card-actions>
     </mat-card>
   </div>
 }

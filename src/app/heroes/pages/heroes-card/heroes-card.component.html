@@ -1,6 +1,6 @@
-@if (heroes) {
+@if (heroes()) {
   <div class="flex flex-wrap justify-center gap-10 bg-chill-950 p-5">
-    @for (hero of heroes; track $index) {
+    @for (hero of heroes(); track $index) {
       <mat-card class="relative w-80 pb-12">
         <mat-card-header>
           <div mat-card-avatar class="bg-cover"></div>
@@ -29,13 +29,16 @@
           }
         </mat-card-content>
         <mat-card-actions class="absolute bottom-0 flex w-full justify-around">
-          <button (click)="onDeleteHero(hero)" mat-raised-button color="warn">
+          <button
+            (click)="deleteHero.emit(hero)"
+            mat-raised-button
+            color="warn">
             Delete
           </button>
           <button
             mat-raised-button
             color="primary"
-            (click)="onUpdateAndNavigateHero(hero)">
+            (click)="updateAndNavigateHero.emit(hero)">
             Edit
           </button>
         </mat-card-actions>

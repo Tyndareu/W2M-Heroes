@@ -1,5 +1,5 @@
-import { Component, DestroyRef, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -21,7 +21,6 @@ import { HeroesCardComponent } from '../heroes-card/heroes-card.component';
 
 @Component({
   selector: 'app-search-page',
-  standalone: true,
   imports: [
     FormsModule,
     HeroesCardComponent,
@@ -37,32 +36,21 @@ import { HeroesCardComponent } from '../heroes-card/heroes-card.component';
   templateUrl: './heroes-list.component.html',
 })
 export class HeroesListComponent implements OnInit {
+  private readonly _heroesService = inject(HeroesService);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _destroyRef = inject(DestroyRef);
+  private readonly _router = inject(Router);
+
   public searchInput = new FormControl('');
   public heroes = signal<Hero[]>([]);
-  public allHeroes = signal<Hero[] | null>(null);
+  public allHeroes = toSignal(this._heroesService.getHeroes(null));
   public selectedHero = signal<Hero | undefined>(undefined);
   public isLoading = signal(false);
 
-  private readonly debounceTime = 500;
-
-  constructor(
-    private readonly heroesService: HeroesService,
-    private readonly dialog: MatDialog,
-    private readonly destroyRef: DestroyRef,
-    private readonly router: Router
-  ) {}
+  private readonly _debounceTime = 500;
 
   ngOnInit(): void {
-    this.getAllHeroes();
     this.setupSearchInputListener();
-  }
-
-  public getAllHeroes(): void {
-    this.heroesService.getHeroes(null).subscribe({
-      next: heroes => {
-        this.allHeroes.set(heroes);
-      },
-    });
   }
 
   public onOptionSelected(event: MatAutocompleteSelectedEvent): void {
@@ -81,12 +69,12 @@ export class HeroesListComponent implements OnInit {
   }
 
   public updateAndNavigateHero(hero: Hero): void {
-    this.heroesService.setSelectedHero(hero);
-    this.router.navigate(['/heroes/hero', hero.id]);
+    this._heroesService.setSelectedHero(hero);
+    this._router.navigate(['/heroes/hero', hero.id]);
   }
 
   public deleteHero(hero: Hero): void {
-    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+    const dialogRef = this._dialog.open(DialogConfirmComponent, {
       data: {
         title: 'Delete superhero',
         text: 'Are you sure you want to delete this super hero?',
@@ -96,9 +84,8 @@ export class HeroesListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.heroesService.deleteHero(hero).subscribe({
+        this._heroesService.deleteHero(hero).subscribe({
           next: () => {
-            this.getAllHeroes();
             this.selectedHero.set(undefined);
             this.searchInput.setValue('');
           },
@@ -114,15 +101,15 @@ export class HeroesListComponent implements OnInit {
           this.isLoading.set(true);
           this.selectedHero.set(undefined);
         }),
-        debounceTime(this.debounceTime),
+        debounceTime(this._debounceTime),
         map(value => value as string),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this._destroyRef)
       )
       .subscribe((value: string) => {
         if (value === '') {
           return;
         }
-        this.heroesService.getHeroes(value).subscribe({
+        this._heroesService.getHeroes(value).subscribe({
           next: heroes => {
             this.heroes.set(heroes);
             this.isLoading.set(false);

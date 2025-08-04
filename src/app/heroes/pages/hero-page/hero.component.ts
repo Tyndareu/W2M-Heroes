@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, Input, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -20,7 +19,6 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
 
 @Component({
   selector: 'app-hero',
-  standalone: true,
   imports: [
     CommonModule,
     HeroImagePipe,
@@ -35,13 +33,16 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
   ],
   templateUrl: './hero.component.html',
 })
-export class HeroComponent implements OnInit {
-  @Input() public heroID!: string;
+export class HeroComponent {
+  private readonly _heroService = inject(HeroesService);
+  private readonly _fb = inject(FormBuilder);
+  private readonly _router = inject(Router);
 
+  public heroID = input.required<string>();
   public hero = signal<Hero | null>(null);
   public heroForm: FormGroup;
 
-  private readonly formControls = {
+  private readonly _formControls = {
     id: '',
     img: '',
     superhero: ['', Validators.required],
@@ -51,19 +52,12 @@ export class HeroComponent implements OnInit {
     alt_img: null,
   };
 
-  constructor(
-    private readonly heroService: HeroesService,
-    private readonly fb: FormBuilder,
-    private readonly destroyRef: DestroyRef,
-    private readonly router: Router
-  ) {
-    this.heroForm = this.fb.group(this.formControls);
-  }
-
-  ngOnInit(): void {
-    if (this.heroID !== 'new') {
-      this.loadHero();
-    }
+  constructor() {
+    this.heroForm = this._fb.group(this._formControls);
+    effect(() => {
+      const heroId = this.heroID();
+      heroId === 'new' ? this.heroForm.reset() : this.loadHero();
+    });
   }
 
   public onSubmit(): void {
@@ -72,16 +66,16 @@ export class HeroComponent implements OnInit {
       return;
     }
     const formData: Hero = { ...this.heroForm.value };
-    formData.superhero = this.toTitleCase(formData.superhero);
-    formData.id = this.heroID === 'new' ? crypto.randomUUID() : this.heroID;
+    formData.superhero = this._toTitleCase(formData.superhero);
+    formData.id = this.heroID() === 'new' ? crypto.randomUUID() : this.heroID();
 
     const saveHero$ =
-      this.heroID !== 'new'
-        ? this.heroService.updateHero(formData)
-        : this.heroService.newHero(formData);
+      this.heroID() !== 'new'
+        ? this._heroService.updateHero(formData)
+        : this._heroService.newHero(formData);
 
-    saveHero$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => this.router.navigate(['/heroes/heroes-list']),
+    saveHero$.subscribe({
+      next: () => this._router.navigate(['/heroes/heroes-list']),
     });
   }
 
@@ -91,11 +85,10 @@ export class HeroComponent implements OnInit {
   }
 
   public loadHero(): void {
-    if (!this.heroID) return;
-    this.heroService
-      .selectedHeroWithGetById(this.heroID!)
+    if (!this.heroID()) return;
+    this._heroService
+      .selectedHeroWithGetById(this.heroID())
       .pipe(
-        takeUntilDestroyed(this.destroyRef),
         map(hero => ({
           ...hero,
           superhero: hero.superhero.toUpperCase(),
@@ -114,7 +107,7 @@ export class HeroComponent implements OnInit {
     this.heroForm.get('img')?.setValue(this.hero()?.img);
   }
 
-  private toTitleCase(str: string): string {
+  private _toTitleCase(str: string): string {
     return str.replace(/\w\S*/g, txt => {
       return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
     });
