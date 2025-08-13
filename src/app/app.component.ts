@@ -9,9 +9,9 @@ import { LoadingService } from './shared/services/loading.service';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  // Service for managing the loading state.
+  /** Service for managing the loading state. */
   private readonly _loadingService = inject(LoadingService);
 
-  // Signal indicating if the application is loading.
+  /** Signal indicating if the application is loading. */
   public isLoading = this._loadingService.$isLoading;
 }

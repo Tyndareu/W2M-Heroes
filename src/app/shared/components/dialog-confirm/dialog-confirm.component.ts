@@ -12,9 +12,9 @@ import { DialogConfirm } from '../../interfaces/dialog-confirm.interface';
   templateUrl: './dialog-confirm.component.html',
 })
 export class DialogConfirmComponent {
-  // Reference to the dialog opened by MatDialog.
+  /** Reference to the dialog opened by MatDialog. */
   dialogRef = inject<MatDialogRef<DialogConfirmComponent>>(MatDialogRef);
-  // Data passed to the dialog.
+  /** Data passed to the dialog. */
   data = inject<DialogConfirm>(MAT_DIALOG_DATA);
 
   /**

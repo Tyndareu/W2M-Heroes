@@ -8,13 +8,13 @@ import { Hero } from '../interfaces/hero.interface';
   providedIn: 'root',
 })
 export class HeroesService {
-  // The HttpClient for making HTTP requests.
+  /** The HttpClient for making HTTP requests. */
   private readonly _http = inject(HttpClient);
 
-  // The API URL for the heroes service.
+  /** The API URL for the heroes service. */
   private readonly _apiUrl: string = environment.apiUrl;
 
-  // The currently selected hero.
+  /** The currently selected hero. */
   private readonly _selectedHero = signal<Hero | null>(null);
 
   /**

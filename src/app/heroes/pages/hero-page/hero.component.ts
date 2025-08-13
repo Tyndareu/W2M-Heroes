@@ -34,14 +34,25 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
   templateUrl: './hero.component.html',
 })
 export class HeroComponent {
+  /** Service for hero-related operations */
   private readonly _heroService = inject(HeroesService);
+
+  /** Angular FormBuilder for creating reactive forms */
   private readonly _fb = inject(FormBuilder);
+
+  /** Angular Router for navigation */
   private readonly _router = inject(Router);
 
+  /** Required input signal containing the hero ID or 'new' for creating a new hero */
   public heroID = input.required<string>();
+
+  /** Signal containing the current hero data */
   public hero = signal<Hero | null>(null);
+
+  /** Reactive form for hero data input */
   public heroForm: FormGroup;
 
+  /** Form control configuration with validation rules */
   private readonly _formControls = {
     id: '',
     img: '',
@@ -52,6 +63,10 @@ export class HeroComponent {
     alt_img: null,
   };
 
+  /**
+   * Creates an instance of HeroComponent.
+   * @memberof HeroComponent
+   */
   constructor() {
     this.heroForm = this._fb.group(this._formControls);
     effect(() => {
@@ -60,6 +75,12 @@ export class HeroComponent {
     });
   }
 
+  /**
+   * Handles form submission for creating or updating a hero.
+   *
+   * @return {*}  {void}
+   * @memberof HeroComponent
+   */
   public onSubmit(): void {
     if (this.heroForm.invalid) {
       this.heroForm.markAllAsTouched();
@@ -79,13 +100,28 @@ export class HeroComponent {
     });
   }
 
+  /**
+   * Checks if a form field has validation errors and has been touched by the user.
+   *
+   * @param {string} field
+   * @return {*}  {(boolean | null)}
+   * @memberof HeroComponent
+   */
   public isValidField(field: string): boolean | null {
     const control = this.heroForm.controls[field];
     return control.errors && control.touched;
   }
 
+  /**
+   * Loads hero data from the service and populates the form.
+   *
+   * @return {*}  {void}
+   * @memberof HeroComponent
+   */
   public loadHero(): void {
-    if (!this.heroID()) return;
+    if (!this.heroID()) {
+      return;
+    }
     this._heroService
       .selectedHeroWithGetById(this.heroID())
       .pipe(
@@ -102,14 +138,28 @@ export class HeroComponent {
       });
   }
 
+  /**
+   * Resets the form to its initial state while preserving the hero's image.
+   *
+   * @memberof HeroComponent
+   */
   public resetForm(): void {
     this.heroForm.reset();
     this.heroForm.get('img')?.setValue(this.hero()?.img);
   }
 
+  /**
+   * Converts a string to title case format.
+   *
+   * @private
+   * @param {string} str
+   * @return {*}  {string}
+   * @memberof HeroComponent
+   */
   private _toTitleCase(str: string): string {
-    return str.replace(/\w\S*/g, txt => {
-      return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
-    });
+    return str.replace(
+      /\w\S*/g,
+      txt => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase()
+    );
   }
 }

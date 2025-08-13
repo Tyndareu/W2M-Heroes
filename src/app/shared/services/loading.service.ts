@@ -7,7 +7,7 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class LoadingService {
-  // Signal indicating whether the application is currently loading.
+  /** Signal indicating whether the application is currently loading. */
   public $isLoading = signal(false);
 
   /**

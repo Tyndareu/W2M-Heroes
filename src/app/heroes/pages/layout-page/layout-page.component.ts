@@ -23,7 +23,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   templateUrl: './layout-page.component.html',
 })
 export class LayoutPageComponent {
-  // Items to be displayed in the sidebar navigation.
+  /** Items to be displayed in the sidebar navigation. */
   public sideBarItems = [
     {
       label: 'List of Heroes',

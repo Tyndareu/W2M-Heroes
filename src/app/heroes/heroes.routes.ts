@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-// Defines the routes for the heroes feature module.
+/** Defines the routes for the heroes feature module. */
 export const heroesRoutes: Routes = [
   {
     path: 'heroes',

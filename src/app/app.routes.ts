@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { heroesRoutes } from './heroes/heroes.routes';
 
-// Defines the main application routes.
+/** Defines the main application routes. */
 export const routes: Routes = [
   { path: '', redirectTo: 'heroes', pathMatch: 'full' },
   ...heroesRoutes,

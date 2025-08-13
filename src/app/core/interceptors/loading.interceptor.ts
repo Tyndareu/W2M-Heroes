@@ -14,10 +14,10 @@ import { LoadingService } from '../../shared/services/loading.service';
  */
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
-  // Service for managing the loading state.
+  /** Service for managing the loading state. */
   private readonly _loadingService = inject(LoadingService);
 
-  // URLs to exclude from showing the loading indicator.
+  /** URLs to exclude from showing the loading indicator. */
   private readonly _excludedUrls: string[] = ['/heroes?q'];
 
   /**

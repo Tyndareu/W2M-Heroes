@@ -14,10 +14,12 @@ import { HeroImagePipe } from '../../pipes/hero-image.pipe';
   templateUrl: './heroes-card.component.html',
 })
 export class HeroesCardComponent {
-  // Input property for the list of heroes to display.
+  /** Input property for the list of heroes to display. */
   public heroes = input.required<Hero[]>();
-  // Output event for deleting a hero.
+
+  /** Output event for deleting a hero. */
   readonly deleteHero = output<Hero>();
-  // Output event for updating and navigating to a hero.
+
+  /** Output event for updating and navigating to a hero. */
   readonly updateAndNavigateHero = output<Hero>();
 }

@@ -36,34 +36,34 @@ import { HeroesCardComponent } from '../heroes-card/heroes-card.component';
   templateUrl: './heroes-list.component.html',
 })
 export class HeroesListComponent implements OnInit {
-  // Service for managing heroes.
+  /** Service for managing heroes. */
   private readonly _heroesService = inject(HeroesService);
-  // Service for opening dialogs.
+  /** Service for opening dialogs. */
   private readonly _dialog = inject(MatDialog);
-  // Reference to the component's lifecycle for destruction.
+  /** Reference to the component's lifecycle for destruction. */
   private readonly _destroyRef = inject(DestroyRef);
-  // Angular router for navigation.
+  /** Angular router for navigation. */
   private readonly _router = inject(Router);
 
-  // Form control for the search input.
+  /** Form control for the search input. */
   public searchInput = new FormControl('');
-  // Signal holding the list of heroes matching the search.
+  /** Signal holding the list of heroes matching the search. */
   public heroes = signal<Hero[]>([]);
-  // Signal holding all heroes.
+  /** Signal holding all heroes. */
   public allHeroes = signal<Hero[] | undefined>(undefined);
-  // Signal holding the currently selected hero.
+  /** Signal holding the currently selected hero. */
   public selectedHero = signal<Hero | undefined>(undefined);
-  // Signal indicating if the component is loading data.
+  /** Signal indicating if the component is loading data. */
   public isLoading = signal(false);
 
-  // Time in milliseconds for debouncing the search input.
+  /** Time in milliseconds for debouncing the search input. */
   private readonly _debounceTime = 500;
 
   /**
    * Initializes the component.
    */
   ngOnInit(): void {
-    this.setupSearchInputListener();
+    this._setupSearchInputListener();
     this.getAllHeroes();
   }
 
@@ -136,7 +136,7 @@ export class HeroesListComponent implements OnInit {
   /**
    * Sets up a listener for the search input value changes.
    */
-  private setupSearchInputListener(): void {
+  private _setupSearchInputListener(): void {
     this.searchInput.valueChanges
       .pipe(
         tap(() => {
