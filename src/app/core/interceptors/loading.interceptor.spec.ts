@@ -9,7 +9,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { LoadingService } from '../../shared/services/loading/loading.service';
+import { LoadingService } from '../../shared/services/loading.service';
 import { LoadingInterceptor } from './loading.interceptor';
 
 describe('LoadingInterceptor', () => {

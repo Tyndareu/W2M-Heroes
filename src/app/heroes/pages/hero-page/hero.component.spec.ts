@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
+import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { HeroesService } from '../../Services/heroes.service';
 import { Hero } from '../../interfaces/hero.interface';
@@ -15,28 +15,38 @@ describe('HeroComponent', () => {
   let component: HeroComponent;
   let fixture: ComponentFixture<HeroComponent>;
   let heroesServiceSpy: jasmine.SpyObj<HeroesService>;
+  let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
     const heroesService = jasmine.createSpyObj('HeroesService', [
       'newHero',
       'updateHero',
       'selectedHeroWithGetById',
-      'setSelectedHero',
     ]);
 
+    const router = jasmine.createSpyObj('Router', ['navigate']);
+
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, RouterTestingModule, HeroComponent],
-      providers: [{ provide: HeroesService, useValue: heroesService }],
+      imports: [ReactiveFormsModule, HeroComponent],
+      providers: [
+        { provide: HeroesService, useValue: heroesService },
+        { provide: Router, useValue: router },
+      ],
     }).compileComponents();
 
     heroesServiceSpy = TestBed.inject(
       HeroesService
     ) as jasmine.SpyObj<HeroesService>;
+    routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HeroComponent);
     component = fixture.componentInstance;
+    // Mock the heroID input signal
+    fixture.componentRef.setInput('heroID', '1');
+    // Prevent the effect from running during setup
+    spyOn(component, 'loadHero');
     fixture.detectChanges();
   });
 
@@ -62,7 +72,8 @@ describe('HeroComponent', () => {
 
     heroesServiceSpy.selectedHeroWithGetById.and.returnValue(of(mockHero));
 
-    component.heroID = '1';
+    // Remove the spy from beforeEach and call loadHero directly
+    (component.loadHero as jasmine.Spy).and.callThrough();
     component.loadHero();
 
     expect(component.hero()).toEqual(mockHeroWithUpperCaseSuperhero);
@@ -115,47 +126,66 @@ describe('HeroComponent', () => {
       first_appearance: 'Test First Appearance',
       alt_img: 'test-alt-img-url',
     };
-    const updateHeroSpy = heroesServiceSpy.updateHero.and.returnValue(
-      of(mockHero)
-    );
-    const navigateSpy = spyOn(component['router'], 'navigate').and.returnValue(
-      Promise.resolve(true)
-    );
-    component.heroID = '1';
+
+    heroesServiceSpy.updateHero.and.returnValue(of(mockHero));
+    routerSpy.navigate.and.returnValue(Promise.resolve(true));
+
     component.heroForm.patchValue(mockHero);
     component.onSubmit();
-    expect(updateHeroSpy).toHaveBeenCalledWith(mockHero);
-    expect(navigateSpy).toHaveBeenCalledWith(['/heroes/heroes-list']);
+
+    const expectedHero = {
+      ...mockHero,
+      superhero: 'Test Superhero', // Title case conversion
+      id: '1', // Should keep existing ID
+    };
+
+    expect(heroesServiceSpy.updateHero).toHaveBeenCalledWith(expectedHero);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/heroes/heroes-list']);
   });
   it('should call newHero when submitting valid form for a new hero', () => {
+    // Set heroID to 'new' for new hero scenario
+    fixture.componentRef.setInput('heroID', 'new');
+
     const mockHero: Hero = {
       id: '',
       img: 'hero-img-url',
-      superhero: 'Test Superhero',
+      superhero: 'test superhero',
       publisher: 'Test Publisher',
       alter_ego: 'Test Alter Ego',
       first_appearance: 'Test First Appearance',
       alt_img: 'test-alt-img-url',
     };
-    const newHeroSpy = heroesServiceSpy.newHero.and.returnValue(of(mockHero));
-    const navigateSpy = spyOn(component['router'], 'navigate').and.returnValue(
-      Promise.resolve(true)
+
+    heroesServiceSpy.newHero.and.returnValue(of(mockHero));
+    routerSpy.navigate.and.returnValue(Promise.resolve(true));
+
+    // Mock crypto.randomUUID
+    spyOn(crypto, 'randomUUID').and.returnValue(
+      '550e8400-e29b-41d4-a716-446655440000'
     );
 
     component.heroForm.patchValue(mockHero);
-    component.heroID = 'new';
     component.onSubmit();
-    expect(newHeroSpy).toHaveBeenCalled;
-    expect(navigateSpy).toHaveBeenCalledWith(['/heroes/heroes-list']);
+
+    const expectedHero = {
+      ...mockHero,
+      superhero: 'Test Superhero', // Title case conversion
+      id: '550e8400-e29b-41d4-a716-446655440000', // Should generate new UUID
+    };
+
+    expect(heroesServiceSpy.newHero).toHaveBeenCalledWith(expectedHero);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/heroes/heroes-list']);
   });
 
   it('should not call any service and not navigate if the form is invalid', () => {
-    const invalidForm: FormGroup = new FormBuilder().group({
-      superhero: ['', Validators.required],
-    });
-    component.heroForm = invalidForm;
+    // Make form invalid by clearing required field
+    component.heroForm.get('superhero')?.setValue('');
+    component.heroForm.get('superhero')?.markAsTouched();
+
     component.onSubmit();
+
     expect(heroesServiceSpy.newHero).not.toHaveBeenCalled();
     expect(heroesServiceSpy.updateHero).not.toHaveBeenCalled();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
   });
 });

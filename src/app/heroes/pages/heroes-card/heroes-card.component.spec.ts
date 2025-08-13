@@ -1,20 +1,30 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { By } from '@angular/platform-browser';
 import { Hero } from '../../interfaces/hero.interface';
+import { HeroImagePipe } from '../../pipes/hero-image.pipe';
 import { HeroesCardComponent } from './heroes-card.component';
 
 describe('HeroesCardComponent', () => {
   let component: HeroesCardComponent;
   let fixture: ComponentFixture<HeroesCardComponent>;
 
+  const mockHero: Hero = {
+    id: '1',
+    superhero: 'Superman',
+    publisher: 'DC Comics',
+    alter_ego: 'Clark Kent',
+    first_appearance: 'Action Comics #1',
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HeroesCardComponent],
+      imports: [HeroesCardComponent, HeroImagePipe],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(HeroesCardComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('heroes', [mockHero]);
     fixture.detectChanges();
   });
 
@@ -22,29 +32,15 @@ describe('HeroesCardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should emit deleteHero event when onDeleteHero is called', () => {
-    const mockHero: Hero = { id: '1', superhero: 'Test Hero' };
-    const deleteSpy = spyOn(component.deleteHero, 'emit');
+  it('should display hero information', () => {
+    const cardTitle = fixture.debugElement.query(
+      By.css('mat-card-title')
+    ).nativeElement;
+    const cardSubtitle = fixture.debugElement.query(
+      By.css('mat-card-subtitle')
+    ).nativeElement;
 
-    component.onDeleteHero(mockHero);
-
-    expect(deleteSpy).toHaveBeenCalledWith(mockHero);
-  });
-
-  it('should emit updateAndNavigateHero event when onUpdateAndNavigateHero is called', () => {
-    const mockHero: Hero = { id: '1', superhero: 'Test Hero' };
-    const updateSpy = spyOn(component.updateAndNavigateHero, 'emit');
-
-    component.onUpdateAndNavigateHero(mockHero);
-
-    expect(updateSpy).toHaveBeenCalledWith(mockHero);
-  });
-
-  it('should emit getAllHeroes event when onGetAllHeroes is called', () => {
-    const getAllSpy = spyOn(component.getAllHeroes, 'emit');
-
-    component.onGetAllHeroes();
-
-    expect(getAllSpy).toHaveBeenCalled();
+    expect(cardTitle.textContent).toContain(mockHero.superhero);
+    expect(cardSubtitle.textContent).toContain(mockHero.alter_ego);
   });
 });

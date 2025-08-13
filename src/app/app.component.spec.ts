@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { LoadingService } from './shared/services/loading.service';
@@ -6,9 +7,10 @@ describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
 
-  const loadingService = jasmine.createSpyObj('LoadingService', [
-    'setIsLoading',
-  ]);
+  const loadingService = {
+    $isLoading: signal(false),
+    setIsLoading: jasmine.createSpy('setIsLoading'),
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -25,6 +27,7 @@ describe('AppComponent', () => {
   it('should create the app', () => {
     expect(component).toBeTruthy();
   });
+
   it('should initialize isLoading to false', () => {
     expect(component.isLoading()).toBeFalse();
   });
