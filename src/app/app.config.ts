@@ -11,6 +11,7 @@ import { routes } from './app.routes';
 import { CRUDResponseInterceptor } from './core/interceptors/crud-response.interceptor';
 import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
 
+// The application configuration.
 export const appConfig: ApplicationConfig = {
   providers: [
     {

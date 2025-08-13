@@ -6,6 +6,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterOutlet } from '@angular/router';
 
+/**
+ * Layout component for the heroes feature, including a sidebar and toolbar.
+ */
 @Component({
   selector: 'app-layout-page',
   imports: [
@@ -20,6 +23,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   templateUrl: './layout-page.component.html',
 })
 export class LayoutPageComponent {
+  // Items to be displayed in the sidebar navigation.
   public sideBarItems = [
     {
       label: 'List of Heroes',

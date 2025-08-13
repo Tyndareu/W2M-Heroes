@@ -1,3 +1,6 @@
+/**
+ * Represents a superhero.
+ */
 export interface Hero {
   id: string;
   img?: string;
